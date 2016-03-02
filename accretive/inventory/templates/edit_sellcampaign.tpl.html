@@ -1,0 +1,191 @@
+<div class="col-md-4">
+    <fieldset>
+        <legend ng-if="entityEditableData.id == null" style="background-color: #D9EDF7;">New Campaign {{entityEditableData.id}}</legend>
+        <legend ng-if="entityEditableData.id != null" style="background-color: #D9EDF7;">Edit Campaign {{entityEditableData.id}}</legend>
+          <form name="form" novalidate>
+            <div class="form-group" ng-class="{ 'has-error' : form.campaignName.$invalid && !form.campaignName.$pristine }">
+              <label>Campaign Name</label>
+              <input ng-model="entityEditableData.name" class="form-control" type="text" name="campaignName" placeholder="{{entityEditableData.name}}" required/>
+              <span ng-if="form.campaignName.$invalid && !form.campaignName.$pristine" class="invalid">Campaign name is required</span>
+            </div>
+            <div class="form-group">
+              <label class="label-control">Advertiser</label>
+                <ui-select ng-model="entityEditableData.advertiserId" theme="bootstrap" name="advertiser" reset-search-input="false" required>
+                  <ui-select-match placeholder="Advertiser">{{$select.selected.name}}</ui-select-match>
+                  <ui-select-choices repeat="advertiser.id as advertiser in entityEditableData.options.advertiserId | filter: $select.search | orderBy: advertiser.name">
+                      <div ng-bind-html="advertiser.id | highlight: $select.search"></div>
+                      <div ng-bind-html="advertiser.name | highlight: $select.search"></div>
+                  </ui-select-choices>
+                </ui-select>
+                <span ng-class="{ invalid : form.advertiser.$invalid, valid : form.advertiser.$valid }">Advertiser is required</span>
+            </div>
+            <!--
+              we use ng-if="entityEditableData" to make sure the internal
+              ng-init is called after the scope is fully initialized
+            -->
+            <div class="form-group" ng-if="entityEditableData">
+              <h4>Delivery Method</h4>
+              <div class="form-group">
+                <label class="label-control">Pool</label>
+                <select class="form-control"
+                        ng-model="entityEditableData.pool"
+                        ng-options="key*1 as value for (key, value) in SellCampaign.POOL_OPTIONS">
+                </select>
+              </div>
+            </div>
+            <!--
+              we use ng-if="entityEditableData" to make sure the internal
+              ng-init is called after the scope is fully initialized
+            -->
+            <div class="form-group" ng-if="entityEditableData">
+              <label class="label-control">Campaign Traffic Serving Strategy</label>
+              <select
+                  class="form-control"
+                  ng-model="entityEditableData.strategy"
+                  ng-options="key*1 as value for (key, value) in SellCampaign.STRATEGY_OPTIONS">
+              </select>
+            </div>
+            <div class="form-group">
+              <div ng-show="entityEditableData.strategy === SellCampaign.STRATEGY.MANUAL">
+                <b>Manual Strategy:</b> Highest priority.
+                If a % is given, serve given % of traffic from starting Date.
+                If end date is given, campaign ends on that date.
+                If a positive max impressions count is provided,
+                the campaign ends when that max impressions are reached.
+                If both are given which ever is sooner will determine the end date.
+                If % is not given we try to reach the count between start and end Date.
+              </div>
+              <div ng-show="entityEditableData.strategy === SellCampaign.STRATEGY.ASAP100">
+                <b>100% ASAP:</b>
+                Serve 100% of traffic from starting Date.
+                Ends when an end date is provided or Maximum impressions reached which ever happens first.
+                If end date or max quota is not provided the campaign lives for ever.
+              </div>
+              <div ng-show="entityEditableData.strategy === SellCampaign.STRATEGY.PCT_UNTIL_END">
+                <b>By % of impressions until end date:</b>
+                Serve given % of traffic until an end of date.
+              </div>
+              <div ng-show="entityEditableData.strategy === SellCampaign.STRATEGY.PCT_UNTIL_MAX">
+                <b>By % of impressions until max count:</b>
+                Serve the given % of traffic until the max quota.
+              </div>
+              <div ng-show="entityEditableData.strategy === SellCampaign.STRATEGY.IMP_OVER_TIME">
+                <b>Impressions count over time:</b> Lowest priority.
+                The campaign ends when the max impression count is reached.
+                If end date is given, the campaign tries to evenly distribute the traffic to meet the end date.
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="label-control">Start Date</label>
+              <quick-datepicker id="start_date" ng-model="entityEditableData.startDate"
+                                time-format="H:mm" required=true placeholder='mm/dd/yyyy'>
+              </quick-datepicker>
+            </div>
+            <div class="form-group" ng-show="entityEditableData.strategy !== SellCampaign.STRATEGY.PCT_UNTIL_MAX">
+                <label class="label-control">End Date</label>
+                <quick-datepicker id="end_date" ng-model="entityEditableData.endDate"
+                                  time-format="H:mm" placeholder='mm/dd/yyyy'
+                                  ng-required="entityEditableData.strategy === SellCampaign.STRATEGY.IMP_OVER_TIME ||
+                                               entityEditableData.strategy === SellCampaign.STRATEGY.PCT_UNTIL_END">
+                </quick-datepicker>
+                <button ng-click="entityEditableData.endDate=null" class="remove btn btn-default btn-sm">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </div>
+            <div ng-show="entityEditableData.strategy !== SellCampaign.STRATEGY.IMP_OVER_TIME" class="form-group">
+              <label class="label-control">Traffic Percentage</label>
+              <div class="input-group col-sm-12 col-md-12">
+                <input ng-show="entityEditableData.strategy !== SellCampaign.STRATEGY.ASAP100 &&
+                              entityEditableData.strategy != 0" type="number"
+                       class="form-control"
+                       min="0"
+                       max="100"
+                       ng-model="entityEditableData.percentOfTraffic"
+                       ng-required="entityEditableData.strategy === SellCampaign.PCT_UNTIL_END || entityEditableData.strategy === SellCampaign.PCT_UNTIL_MAX"/>
+                <span ng-show="entityEditableData.strategy == SellCampaign.STRATEGY.ASAP100">100%</span>
+                <span ng-show="entityEditableData.strategy !== SellCampaign.STRATEGY.ASAP100 &&
+                             entityEditableData.strategy != 0" class="input-group-addon">%</span>
+              </div>
+            </div>
+            <div class="form-group" ng-show="entityEditableData.strategy !== SellCampaign.STRATEGY.PCT_UNTIL_END">
+              <label class="label-control">Max Impressions</label>
+              <input type="number" class="form-control" min="0"
+                   ng-model="entityEditableData.absoluteQuota"
+                   ng-required="entityEditableData.strategy === SellCampaign.PCT_UNTIL_MAX || entityEditableData.strategy === SellCampaign.PCT_UNTIL_END || entityEditableData.strategy === SellCampaign.IMP_OVER_TIME"/>
+            </div>
+            <!--
+             The set of new state options depends on the existing state
+             e.g. an active campaign can only be disabled. Therefore we cannot use
+             entityEditableData.state to both bind the newly selected state +
+             choosing which options to show. To workaround it, we store the current
+             state in a temp variable and switching on the temp var.
+             We can only initialize the temp variable after the complete page is
+             loaded therefore we use ng-if="entityEditableData.tempData"
+            -->
+            <div class="form-group" ng-if="entityEditableData.tempData">
+                <div><label>Current State: {{entityEditableData.stateName}}</label></div>
+                <label>New State</label>
+                <select style="width:12em" ng-model="entityEditableData.state" class="form-control"
+                        ng-init="entityEditableData.tempData.curState=entityEditableData.state">
+                  <option ng-if="Inventory.isNewEntity(entityEditableData) || entityEditableData.tempData.curState=='2' ||
+                                    entityEditableData.tempData.curState=='3' || entityEditableData.tempData.curState=='4'"
+                          value="1">Disabled</option>
+                  <option ng-if="Inventory.isNewEntity(entityEditableData) || entityEditableData.tempData.curState=='1'"
+                          value="2">New</option>
+                  <option ng-if="!Inventory.isNewEntity(entityEditableData) && entityEditableData.tempData.curState=='5'"
+                          value="3">Renew</option>
+                </select>
+            </div>
+          </form>
+    </fieldset>
+</div>
+<div class="col-md-8">
+  <!-- Edit rotation -->
+  <div class="form-group">
+      <label class="label-control">Select Rotation</label>
+      <ui-select ng-model="entityEditableData.rotation" theme="bootstrap" name="advertiser" reset-search-input="false" style="margin-bottom: 10px; width: 40%;">
+          <ui-select-match placeholder="Select Rotation">{{$select.selected.name}}</ui-select-match>
+          <ui-select-choices repeat="rotation in entityEditableData.options.rotationId | filter: $select.search" style="width: auto;">
+              <div ng-bind-html="rotation.id | highlight: $select.search"></div>
+              <div ng-bind-html="rotation.name | highlight: $select.search"></div>
+          </ui-select-choices>
+      </ui-select>
+  </div>
+  <div class="form-group">
+    <button class="btn btn-info btn-sm"
+            ng-click="entityEditableData.tempData.showRotation=true">
+      <strong>{{entityEditableData.rotation? 'Edit Rotation ' + entityEditableData.rotation.id:'Create New Rotation'}}</strong>
+    </button>
+    <div ng-if="entityEditableData.tempData.showRotation">
+      <div style="width:100%"
+           ng-controller="EditInventoryCtrl"
+           ng-init="init(Inventory.ROTATION, entityEditableData.rotation, Inventory.SELL_CAMPAIGN, entityEditableData,
+                         $parent.getOnSaved(entityEditableData.tempData, 'showRotation'),
+                         $parent.getOnCanceled(entityEditableData.tempData, 'showRotation'))">
+        <div ng-show="open()" ng-include src="'/ui/src/app/inventory/templates/edit_rotation.tpl.html'" class="well"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Edit Rule Set -->
+  <div class="form-group">
+    <label><button ng-click="entityEditableData.tempData.showRuleSet=true" class="btn btn-info btn-sm"><strong>Rule Set {{entityEditableData.ruleSet? entityEditableData.ruleSet.id:''}}</strong></button></label>
+    <div ng-if="entityEditableData.tempData.showRuleSet">
+      <div style="width:100%"
+           ng-controller="EditInventoryCtrl"
+           ng-init="init(Inventory.RULE_SET, entityEditableData.ruleSet, Inventory.SELL_CAMPAIGN, entityEditableData,
+                         $parent.getOnSaved(entityEditableData.tempData, 'showRuleSet'),
+                         $parent.getOnCanceled(entityEditableData.tempData, 'showRuleSet'))">
+        <div ng-show="open()" ng-include src="'/ui/src/app/inventory/templates/edit_ruleset.tpl.html'" class="well"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row col-md-12">
+  <button class="btn btn-primary"
+          ng-click="save()"
+          ng-disabled="disableSubmit() || form.$invalid">Save</button>
+  <button class="btn btn-default"
+          ng-click="cancel()" ng-disabled="disableSubmit()">Cancel</button>
+</div>
+

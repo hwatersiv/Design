@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="col-md-10 col-md-offset-1" style="border: 1px solid silver; border-radius: 10px; padding: 10px; margin-bottom: 15px;">
+        <tabset>
+            <tab ng-repeat-start="alert in alerts" heading="Error">
+                <alert type="'danger'">
+                    <h3>Error {{alert.status}}</h3>
+                    <strong>Message:</strong>
+                    <p>{{alert.message}}</p>
+                    <strong>Error:</strong>
+                    <p>{{alert.error}}</p>
+                </alert>
+            </tab>
+            <tab ng-repeat-end ng-if="alert.url && alert.trace != null" heading="Log">
+                <pre>URL: {{alert.url}}</pre>
+                <pre>{{alert.trace}}</pre>
+            </tab>
+        </tabset>
+        <button class="btn btn-danger" ng-click="sendErrorLog(alerts)">Report</button>
+        <button ng-click="alerts.show=false" class="btn btn-default">Close</button>
+    </div>
+</div>

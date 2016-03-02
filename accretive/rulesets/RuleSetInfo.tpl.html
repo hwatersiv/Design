@@ -1,0 +1,507 @@
+  <div ng-show="!ruleSetCreate">
+  <san-confirm
+    active="deleteAlert"
+    confirm="ruleset.enabled=false; deleteRuleSet(ruleset.id)"
+    confirm-text="Delete RuleSet {{ruleset.id}}">
+      <p>Are you sure you wish to delete &quot;<strong>{{ruleset.name}}</strong>&quot; RuleSet?</p>
+  </san-confirm>
+  <san-crud-buttons
+    class="pull-right"
+    edit="rulesetEditSwitch()"
+    delete="deleteAlert=true"
+    save="save(ruleset)"
+    cancel="rulesetEditSwitch()">
+  </san-crud-buttons>
+  </div>
+  <style>
+    .disabled {
+      text-decoration: line-through;
+      color: red;
+    }
+  </style>
+  <div class="col-md-6">
+  <san-field-group ng-if="!ruleSetCreate">
+    <san-field label="RuleSet Name" model="ruleset.name" type="text" edit-var="rulesetEdit" required="true"></san-field>
+    <div><h4>Rules<a class="btn btn-xs btn-primary pull-right" ng-click="rulesetCreateSwitch();">New Rule</a></h4></div>
+    <div ng-repeat="(key, value) in ruleset.rules">
+      <div>
+        <label ng-if="!ruleset.rules[key].enabled && !rulesetEdit" ng-style="{color: 'red'}">Disabled</label>
+        <label ng-if="ruleset.rules[key].enabled && rulesetEdit">Enabled</label>
+        <label ng-if="!ruleset.rules[key].enabled && rulesetEdit" ng-style="{color: 'red'}">Enabled</label>
+        <input ng-if="!ruleset.rules[key].enabled && rulesetEdit" ng-model="ruleset.rules[key].enabled" value="{{value.enabled}}" type="checkbox" edit-var="rulesetEdit" ng-click="enableRule(row)" ng-class="ruleset.rules[key].enabled ? '' : 'disabled'" />
+        <input ng-if="ruleset.rules[key].enabled && rulesetEdit" ng-model="ruleset.rules[key].enabled" value="{{value.enabled}}" type="checkbox" edit-var="rulesetEdit" ng-click="DeleteRule(row)" />
+      </div>
+      <san-field ng-if="!rulesetEdit && !ruleset.rules[key].enabled" label="Type" value="{{ruleset.rules[key].typeName}}" model="ruleset.rules[key].typeName" type="text" edit-var="rulesetEdit" required="true" ng-class="ruleset.rules[key].enabled ? '' : 'disabled'"></san-field>
+      <san-field ng-if="!rulesetEdit && ruleset.rules[key].enabled" label="Type" value="{{ruleset.rules[key].typeName}}" model="ruleset.rules[key].typeName" type="text" edit-var="rulesetEdit" required="true"></san-field>
+      <san-field ng-if="rulesetEdit" model="ruleset.rules[key].typeId" label="Type" edit-var="true">
+      <select style="width:100%" ui-select2 
+              name="Type"
+              ng-model="ruleset.rules[key].typeId"
+              data-placeholder="Choose Type">
+        <option ng-repeat="type in Rule.ruleOptions"
+                value="{{type.typeId}}">
+          {{type.typeDisplayName}}
+        </option>
+      </select>
+    </san-field>
+    </san-field-group>
+    <san-field-group>
+    <san-field ng-if="!rulesetEdit && !ruleset.rules[key].enabled" label="Value" type="text" model="ruleset.rules[key].value" edit-var="rulesetEdit" required="true" ng-class="ruleset.rules[key].enabled ? '' : 'disabled'"></san-field>
+    <san-field ng-if="!rulesetEdit && ruleset.rules[key].enabled" label="Value" type="text" model="ruleset.rules[key].value" edit-var="rulesetEdit" required="true"></san-field>
+    <div ng-if="rulesetEdit">
+    <!-- Ad Type rules and dimensions rules do not support negation -->
+    <div ng-if="ruleset.rules[key].typeId != 4 && ruleset.rules[key].typeId != 5" class="form-group">
+      <san-field label="Is Negation" ng-model="ruleset.rules[key].isNegation" type="checkbox" placeholder="{{ruleset.rules[key].isNegation}}"></san-field>
+    </div>
+      <div ng-switch on="ruleset.rules[key].typeId" class="form-group">
+      <!-- COUNTRY -->
+      <div ng-switch-when="1">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose country(s)">
+          <option ng-repeat="country in values[1]"
+                  value="{{country.value}}">
+            {{country.enumDisplayString}} ({{country.value}})
+          </option>
+        </select>
+      </div>
+      <!-- LANGUAGE -->
+      <div ng-switch-when="2">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose language(s)">
+          <option ng-repeat="language in values[2]"
+                  value="{{language.value}}">
+            {{language.enumDisplayString}}
+          </option>
+        </select>
+      </div>
+      <!-- DEVICE -->
+      <div ng-switch-when="3">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose device type(s)">
+          <option ng-repeat="deviceType in values[3]"
+                  value="{{deviceType.value}}">
+            {{deviceType.enumDisplayString}}
+          </option>
+        </select>
+      </div>
+      <!-- SUB AD TYPE -->
+      <div ng-switch-when="12">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose Sub Ad Type(s)">
+          <option ng-repeat="subAdType in values[12]"
+                  value="{{subAdType.value}}">
+            {{subAdType.enumDisplayString}}
+          </option>
+        </select>
+      </div>
+      <!-- PUBLISHER -->
+      <div ng-switch-when="6">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose publisher(s)">
+          <option ng-repeat="publisher in values[6]"
+                  value="{{publisher.id}}">
+            {{publisher.name}}
+          </option>
+        </select>
+      </div>
+      <!-- CREATIVE ZONE -->
+      <div ng-switch-when="9">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose creative zone(s)">
+          <option ng-repeat="cz in values[9]"
+                  value="{{cz.id}}">
+            {{cz.name}}
+          </option>
+        </select>
+      </div>
+      <!-- CREATIVE ZONE LOCATION-->
+      <div ng-switch-when="10">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose creative zone location(s)">
+          <option ng-repeat="czLocation in values[10]"
+                  value="{{czLocation.creativeZoneLocation_code}}">
+            {{czLocation.location}}
+          </option>
+        </select>
+      </div>
+      <!-- CREATIVE ZONE TYPE-->
+      <div ng-switch-when="4">
+        <select style="width:100%" ui-select2 multiple
+                ng-model="ruleset.rules[key].value" data-placeholder="Choose creative zone type(s)">
+          <option ng-repeat="czType in values[4]"
+                  value="{{czType.typeCode}}">
+            {{czType.typeName}}
+          </option>
+        </select>
+      </div>
+      <!-- CREATIVE ZONE DIMENSIONS -->
+      <div ng-switch-when="5">
+        <label>Please insert dimensions as comma separated list of strings in the format widthxheight e.g. 300x250, 600x100</label>
+        <input class="form-control" type="text" ng-model="ruleset.rules[key].value" ng-list />
+      </div>
+      <!-- Query Param -->
+      <div ng-switch-when="13" class="form-inline">
+        <div class="form-group" ng-init="ruleset.rules[key].value = ruleset.rules[key].value.paramname != null?ruleset.rules[key].value:{};">
+          <label class="sr-only" for="paramname">Name</label>
+          <input type="text" ng-model="ruleset.rules[key].value.paramname"  class="form-control" id="paramname" placeholder="Parameter Name" required>
+        </div>
+        <div class="form-group">
+          <label class="sr-only" for="paramvalue">Value</label>
+          <input type="text" ng-model="ruleset.rules[key].value.paramvalue" class="form-control" id="paramvalue" placeholder="Parameter Value" required>
+        </div>
+      </div>
+      <!-- Multi Query Param -->
+      <div ng-switch-when="14" class="form-inline">
+        <div class="form-group">
+          <label class="sr-only" for="paramvalue">Full Query String</label>
+          <input type="text" ng-init="ruleset.rules[key].value = {};" ng-model="ruleset.rules[key].value.paramvalue" class="form-control" id="paramvalue" placeholder="Query String" required>
+        </div>
+        <div ng-repeat='(k,v) in ruleset.rules[key].value.paramvalue.split("&")'>
+          <div class="row">
+            Parameter: {{v}}
+          </div>
+        </div>
+      </div>
+      <!-- ABT COOKIE -->
+      <div ng-switch-when="11">
+        <div class="form-group">
+          <label>Value</label>
+              <span style="width: 100%" ng-init="ruleset.rules[key].tempData.ABTCookieRule=RuleSet.parseABTCookieRule(ruleset.rules[key].value);ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)">
+                {{ruleset.rules[key].value}}</span>
+        </div>
+        <!-- SUB AD TYPE -->
+        <div ng-switch-when="12">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[key].value" data-placeholder="Choose Sub Ad Type(s)">
+            <option ng-repeat="subAdType in values[12]"
+                    value="{{subAdType.value}}">
+              {{subAdType.enumDisplayString}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Age in days</label>
+          <input style="width: 5em" class="form-control" type="text"
+                 ng-model="ruleset.rules[key].tempData.ABTCookieRule.ageInDays"
+                 ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)" />
+        </div>
+        <div class="form-group">
+          <label>Publisher(s)</label>
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[key].tempData.ABTCookieRule.publishers"
+                  data-placeholder="Choose publisher(s)"
+                  ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)">
+            <option ng-repeat="publisher in Rule.options.publisherId"
+                    value="{{publisher.id}}">
+              {{publisher.name}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Campaign(s)</label>
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[key].tempData.ABTCookieRule.campaigns"
+                  data-placeholder="Choose campaign(s)"
+                  ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)">
+            <option ng-repeat="campaign in Rule.options.advertiserCampaignId"
+                    value="{{campaign.id}}">
+              {{campaign.name}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Creative Zone(s)</label>
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[key].tempData.ABTCookieRule.cz"
+                  data-placeholder="Choose creative zone(s)"
+                  ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)">
+            <option ng-repeat="cz in Rule.options.creativeZones"
+                    value="{{cz.id}}">
+              {{cz.name}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Creative(s)</label>
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[key].tempData.ABTCookieRule.creatives"
+                  data-placeholder="Choose creative(s)"
+                  ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)">
+            <option ng-repeat="creative in Rule.options.creativeId"
+                    value="{{creative.id}}">
+              {{creative.name}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+
+          <label style="width: 9em;margin-right: 0.5em">View less than</label>
+          <input style="display: inline;width: 5em" class="form-control"
+                 type="text"
+                 ng-model="ruleset.rules[key].tempData.ABTCookieRule.viewLessThan"
+                 ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)" />
+
+          <label style="margin-left: 0.5em;width: 9em;margin-right: 0.5em">View greater than</label>
+          <input style="display: inline;width: 5em" class="form-control"
+                 type="text"
+                 ng-model="ruleset.rules[key].tempData.ABTCookieRule.viewGreaterThan"
+                 ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)" />
+
+          <label style="margin-left: 0.5em;width: 9em;margin-right: 0.5em">Clicks less than</label>
+          <input style="display: inline;width: 5em" class="form-control"
+                 type="text"
+                 ng-model="ruleset.rules[key].tempData.ABTCookieRule.clicksLessThan"
+                 ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)" />
+
+          <label style="margin-left: 0.5em;width: 9em;margin-right: 0.5em">Clicks greater than</label>
+          <input style="display: inline;width: 5em" class="form-control"
+                 type="text"
+                 ng-model="ruleset.rules[key].tempData.ABTCookieRule.clicksGreaterThan"
+                 ng-change="ruleset.rules[key].value=RuleSet.getABTCookieRuleText(ruleset.rules[key].tempData.ABTCookieRule)" />
+        </div>
+      </div>
+    </div>
+      </div>
+      <hr />
+  </div>
+  </san-field-group>
+  <san-field-group>
+    <div ng-show="ruleSetCreate">
+    <h4>New Rule</h4>
+      <san-field model="ruleset.rules[count].typeId" label="Type" edit-var="true">
+        <select style="width:100%" ui-select2
+                name="Type"
+                ng-model="ruleset.rules[count].typeId"
+                data-placeholder="Choose Type" required>
+          <option ng-repeat="type in Rule.ruleOptions"
+                  value="{{type.typeId}}">
+            {{type.typeDisplayName}}
+          </option>
+        </select>
+      </san-field>
+  </san-field-group>
+  <san-field-group>
+    <div>
+      <!-- Ad Type rules and dimensions rules do not support negation -->
+      <div ng-if="ruleset.rules[count].typeId != 4 && ruleset.rules[count].typeId != 5" class="form-group">
+        <san-field label="Is Negation" ng-model="ruleset.rules[count].isNegation" type="checkbox" placeholder="{{ruleset.rules[count].isNegation}}" edit-var="true"></san-field>
+      </div>
+      <div ng-switch on="ruleset.rules[count].typeId" class="form-group">
+        <!-- COUNTRY -->
+        <div ng-switch-when="1">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose country(s)">
+            <option ng-repeat="country in values[1]"
+                    value="{{country.value}}">
+              {{country.enumDisplayString}} ({{country.value}})
+            </option>
+          </select>
+        </div>
+        <!-- LANGUAGE -->
+        <div ng-switch-when="2">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose language(s)">
+            <option ng-repeat="language in values[2]"
+                    value="{{language.value}}">
+              {{language.enumDisplayString}}
+            </option>
+          </select>
+        </div>
+        <!-- DEVICE -->
+        <div ng-switch-when="3">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose device type(s)">
+            <option ng-repeat="deviceType in values[3]"
+                    value="{{deviceType.value}}">
+              {{deviceType.enumDisplayString}}
+            </option>
+          </select>
+        </div>
+        <!-- SUB AD TYPE -->
+        <div ng-switch-when="12">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose Sub Ad Type(s)">
+            <option ng-repeat="subAdType in values[12]"
+                    value="{{subAdType.value}}">
+              {{subAdType.enumDisplayString}}
+            </option>
+          </select>
+        </div>
+        <!-- PUBLISHER -->
+        <div ng-switch-when="6">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose publisher(s)">
+            <option ng-repeat="publisher in values[6]"
+                    value="{{publisher.id}}">
+              {{publisher.name}}
+            </option>
+          </select>
+        </div>
+        <!-- CREATIVE ZONE -->
+        <div ng-switch-when="9">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose creative zone(s)">
+            <option ng-repeat="cz in values[9]"
+                    value="{{cz.id}}">
+              {{cz.name}}
+            </option>
+          </select>
+        </div>
+        <!-- CREATIVE ZONE LOCATION-->
+        <div ng-switch-when="10">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose creative zone location(s)">
+            <option ng-repeat="czLocation in values[10]"
+                    value="{{czLocation.creativeZoneLocation_code}}">
+              {{czLocation.location}}
+            </option>
+          </select>
+        </div>
+        <!-- CREATIVE ZONE TYPE-->
+        <div ng-switch-when="4">
+          <select style="width:100%" ui-select2 multiple
+                  ng-model="ruleset.rules[count].value" data-placeholder="Choose creative zone type(s)">
+            <option ng-repeat="czType in values[4]"
+                    value="{{czType.typeCode}}">
+              {{czType.typeName}}
+            </option>
+          </select>
+        </div>
+        <!-- CREATIVE ZONE DIMENSIONS -->
+        <div ng-switch-when="5">
+          <label>Please insert dimensions as comma separated list of strings in the format widthxheight e.g. 300x250, 600x100</label>
+          <input class="form-control" type="text" ng-model="ruleset.rules[count].value" ng-list />
+        </div>
+        <!-- Query Param -->
+        <div ng-switch-when="13" class="form-inline">
+          <div class="form-group" ng-init="ruleset.rules[count].value = ruleset.rules[count].value.paramname != null?ruleset.rules[count].value:{};">
+            <label class="sr-only" for="paramname">Name</label>
+            <input type="text" ng-model="ruleset.rules[count].value.paramname"  class="form-control" id="paramname" placeholder="Parameter Name" required>
+          </div>
+          <div class="form-group">
+            <label class="sr-only" for="paramvalue">Value</label>
+            <input type="text" ng-model="ruleset.rules[count].value.paramvalue" class="form-control" id="paramvalue" placeholder="Parameter Value" required>
+          </div>
+        </div>
+        <!-- Multi Query Param -->
+        <div ng-switch-when="14" class="form-inline">
+          <div class="form-group">
+            <label class="sr-only" for="paramvalue">Full Query String</label>
+            <input type="text" ng-init="ruleset.rules[count].value = {};" ng-model="ruleset.rules[count].value.paramvalue" class="form-control" id="paramvalue" placeholder="Query String" required>
+          </div>
+          <div ng-repeat='(k,v) in ruleset.rules[count].value.paramvalue.split("&")'>
+            <div class="row">
+              Parameter: {{v}}
+            </div>
+          </div>
+        </div>
+        <!-- ABT COOKIE -->
+        <div ng-switch-when="11">
+          <div class="form-group">
+            <label>Value</label>
+              <span style="width: 100%" ng-init=
+                      "ruleset.rules[count].tempData.ABTCookieRule=RuleSet.parseABTCookieRule(ruleset.rules[count].value);ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)">
+                {{ruleset.rules[count].value}}</span>
+          </div>
+          <!-- SUB AD TYPE -->
+          <div ng-switch-when="12">
+            <select style="width:100%" ui-select2 multiple
+                    ng-model="ruleset.rules[count].value" data-placeholder="Choose Sub Ad Type(s)">
+              <option ng-repeat="subAdType in Rule.options.subAdType"
+                      value="{{subAdType.value}}">
+                {{subAdType.enumDisplayString}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Age in days</label>
+            <input style="width: 5em" class="form-control" type="text"
+                   ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].ageInDays"
+                   ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)" />
+          </div>
+          <div class="form-group">
+            <label>Publisher(s)</label>
+            <select style="width:100%" ui-select2 multiple
+                    ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].publishers"
+                    data-placeholder="Choose publisher(s)"
+                    ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)">
+              <option ng-repeat="publisher in Rule.options.publisherId"
+                      value="{{publisher.id}}">
+                {{publisher.name}}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Campaign(s)</label>
+            <select style="width:100%" ui-select2 multiple
+                    ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].campaigns"
+                    data-placeholder="Choose campaign(s)"
+                    ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)">
+              <option ng-repeat="campaign in Rule.options.advertiserCampaignId"
+                      value="{{campaign.id}}">
+                {{campaign.name}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Creative Zone(s)</label>
+            <select style="width:100%" ui-select2 multiple
+                    ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].cz"
+                    data-placeholder="Choose creative zone(s)"
+                    ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)">
+              <option ng-repeat="cz in Rule.options.creativeZones"
+                      value="{{cz.id}}">
+                {{cz.name}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Creative(s)</label>
+            <select style="width:100%" ui-select2 multiple
+                    ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].creatives"
+                    data-placeholder="Choose creative(s)"
+                    ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)">
+              <option ng-repeat="creative in Rule.options.creativeId"
+                      value="{{creative.id}}">
+                {{creative.name}}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="width: 9em;margin-right: 0.5em">View less than</label>
+            <input style="display: inline;width: 5em" class="form-control"
+                   type="text"
+                   ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].viewLessThan"
+                   ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)" />
+
+            <label style="margin-left: 0.5em;width: 9em;margin-right: 0.5em">View greater than</label>
+            <input style="display: inline;width: 5em" class="form-control"
+                   type="text"
+                   ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].viewGreaterThan"
+                   ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)" />
+
+            <label style="margin-left: 0.5em;width: 9em;margin-right: 0.5em">Clicks less than</label>
+            <input style="display: inline;width: 5em" class="form-control"
+                   type="text"
+                   ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].clicksLessThan"
+                   ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)" />
+
+            <label style="margin-left: 0.5em;width: 9em;margin-right: 0.5em">Clicks greater than</label>
+            <input style="display: inline;width: 5em" class="form-control"
+                   type="text"
+                   ng-model="ruleset.rules[count].tempData.ABTCookieRule.rules[count].clicksGreaterThan"
+                   ng-change="ruleset.rules[count].value=RuleSet.getABTCookieRuleText(ruleset.rules[count].tempData.ABTCookieRule)" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 info-box text-right">
+      <button type="button" ng-click="save(ruleset);" class="btn btn-primary btn-xs">Save</button>
+      <button type="button" ng-click="rulesetCreateSwitch();" class="btn btn-default btn-xs">Cancel</button>
+    </div>
+    </div>
+    </div>
+  </san-field-group>
+  </div>

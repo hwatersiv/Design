@@ -1,0 +1,22 @@
+<div class="col-md-6">
+<san-field-group>
+  <san-field model="ruleEnumValue.typeId" label="Type" edit-var="'true'">
+    <select style="width:100%" ui-select2
+            name="RuleEnumTypes"
+            ng-model="ruleEnumValue.typeId"
+            data-placeholder="Choose Template Type">
+      <option ng-repeat="ruleEnumType in RuleEnumValue.ruleEnumTypes"
+              value="{{ruleEnumType.typeId}}">
+        {{ruleEnumType.typeDisplayName}}
+      </option>
+    </select>
+  </san-field>
+  <san-field label="String" model="ruleEnumValue.value" type="text" edit-var="'true'" required="true"></san-field>
+  <san-field label="Enum Value" model="ruleEnumValue.enumValue" type="text" edit-var="'true'" required="true"></san-field>
+  <san-field label="Display String" model="ruleEnumValue.enumDisplayString" type="text" edit-var="'true'" required="true"></san-field>
+</san-field-group>
+</div>
+<div class="col-sm-12 info-box text-right">
+  <button type="button" ng-click="saveNewRuleEnumValue(ruleEnumValue)" class="btn btn-primary btn-xs"></span>Save</button>
+  <button type="button" ng-click="$state.go('RuleEnumValueUIRoot.index')" class="btn btn-default btn-xs">Cancel</button>
+</div>

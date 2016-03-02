@@ -1,0 +1,15 @@
+<dt><label>{{label}}:</label></dt>
+  <dd ng-show="!editVar" ng-switch="type">
+    <p style="padding: 4px;">
+      <span ng-switch-when="checkbox">{{model ? 'Yes' : 'No'}}</span>
+      <span ng-switch-when="date">{{model | date: 'mediumDate'}}</span>
+      <pre ng-switch-when="code">{{model}}</pre>
+      <span ng-switch-default>{{model}}</span>
+    </p>
+  </dd>
+  <dd ng-show="editVar">
+    <div ng-show="type" class="field">
+      <input ng-model="model" type="{{type}}" class="form-control" style="margin-top: 0;" ng-required="required">
+    </div>
+    <ng-transclude ng-show="!type"></ng-transclude>
+  </dd>

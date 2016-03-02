@@ -1,0 +1,142 @@
+<div ng-if="errorMessage" ng-class="errorMessage.type==error? 'alert-danger':'alert-success'" class="row alert noMargin">
+  <div class="col-sm-11">
+    <p><strong>Message: </strong>{{errorMessage.message}}</p>
+    <p ng-if="errorMessage.error"><strong>Error: </strong>{{errorMessage.error}}</p>
+  </div>
+  <div class="col-sm-1 noPadding text-right">
+    <a href="" ng-click="clearAlert()"><span class="glyphicon glyphicon-remove"></span></a>
+  </div>
+</div>
+<div class="noMargin">
+  <div>
+    <button ng-click="newCZSwitch=!newCZSwitch" class="btn btn-xs btn-primary pull-right info-btn-margin" href="">New Creative Zone</button>
+    <div class="clearfix"></div>
+  </div>
+  <div collapse="!newCZSwitch" class="info-btn-margin row">
+    <h5>Select an Ad Type</h5>
+    <button ng-click="newCZDetailsSwitchCtrl(CreativeZone.types.POPUNDER)" class="btn btn-xs btn-info col-sm-1 col-sm-offset-1" href="">Popunder</button>
+    <button ng-click="newCZDetailsSwitchCtrl(CreativeZone.types.IFRAME)" class="btn btn-xs btn-info col-sm-1 col-sm-offset-2" href="">IFrame</button>
+    <button ng-click="newCZDetailsSwitchCtrl(CreativeZone.types.NAVILINK)" class="btn btn-xs btn-info col-sm-1 col-sm-offset-2" href="">Navi Link</button>
+    <button ng-click="newCZDetailsSwitchCtrl(CreativeZone.types.IMAD)" class="btn btn-xs btn-info col-sm-1 col-sm-offset-2" href="">IM Ad</button>
+  </div>
+  <div collapse="newCZDetailsSwitch" ng-form="newCZForm" class="info-btn-margin row" novalidate>
+    <hr/>
+    <h5>{{CreativeZone.getStringForType(newCZ.typeId)}} Details</h5>
+    <div class="form-group col-sm-2">
+      <input ng-model="newCZ.name" type="text" class="form-control" placeholder="{{CreativeZone.getStringForType(newCZ.typeId)}} Name" required/>
+    </div>
+    <div ng-show="newCZ.typeId==CreativeZone.types.IFRAME" class="form-group col-sm-2">
+      <select ng-model="newCZ.location" ng-options="czLoc.location for czLoc in czLocs" class="form-control" ng-required="newCZ.typeId==CreativeZone.types.IFRAME">
+        <option value="">-Location -</option>
+      </select>
+    </div>
+    <div class="form-group col-sm-2">
+      <select ng-model="newCZ.defaultRotationId" ng-options="defaultRotation.id as defaultRotation.name for defaultRotation in defaultRotations" class="form-control" required>
+        <option value="">- Default Rotation -</option>
+      </select>
+    </div>
+    <div ng-show="newCZ.typeId==CreativeZone.types.IFRAME" class="form-group col-sm-2">
+      <input ng-show="newCZ.typeId==CreativeZone.types.IFRAME" ng-model="newCZ.width" type="number" class="form-control" placeholder="Width" ng-required="newCZ.typeId==CreativeZone.types.IFRAME"/>
+    </div>
+    <div ng-show="newCZ.typeId==CreativeZone.types.IFRAME" class="form-group col-sm-2">
+      <input ng-show="newCZ.typeId==CreativeZone.types.IFRAME" ng-model="newCZ.height" type="number" class="form-control" placeholder="Height" ng-required="newCZ.typeId==CreativeZone.types.IFRAME"/>
+    </div>
+    <div class="form-group col-sm-1">
+    <label>SFW: </label>
+      <input ng-click="newCZ.sfw!=newCZ.sfw" ng-model="newCZ.sfw" ng-checked="newCZ.sfw" type="checkbox"/>
+    </div>
+    <div class="form-group col-sm-1">
+      <label>Enabled: </label>
+      <input ng-click="newCZ.enabled!=newCZ.enabled" ng-model="newCZ.enabled" ng-checked="newCZ.enabled" type="checkbox"/>
+    </div>
+    <div class="form-group col-sm-12">
+      <button ng-click="saveCZ(newCZ)" class="btn btn-xs btn-primary" ng-disabled="newCZForm.$invalid">Create New {{CreativeZone.getStringForType(newCZ.typeId)}}</button>
+      <button ng-click="newCZCancel()" class="btn btn-xs btn-default">Cancel</button>
+    </div>
+  </div>
+  <hr/>
+</div>
+
+<!-- AdType Tables -->
+
+<div ng-if="value.length>0" ng-repeat="(adtype,value) in allCZs" class="row noMargin">
+  <div class="info-btn-margin">
+    <h4 class="col-sm-3 noMargin">{{value[0].typeName}}s</h4>
+  </div>
+  <div class="col-sm-12 table-responsive">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th class="text-left">ID</th>
+        <th class="text-left">Name</th>
+        <th ng-if="adtype == CreativeZone.types.IFRAME" class="text-left">Location</th>
+        <th class="text-left">Default Rotation</th>
+        <th ng-if="adtype == CreativeZone.types.IFRAME" class="text-right">Width</th>
+        <th ng-if="adtype == CreativeZone.types.IFRAME" class="text-right">Height</th>
+        <th class="text-right">Owner</th>
+        <th class="text-right">SFW</th>
+        <th class="text-right">Enabled</th>
+        <th class="col-sm-2"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat-start="data in value">
+        <td class="text-left"><a href="">{{data.id}}</a></td>
+        <td ng-show="editCZSwitch!==data.id" class="text-left"><a href="">{{data.name}}</a></td>
+        <td ng-show="editCZSwitch===data.id" class="text-left">
+          <input ng-model="editCZ.name" type="text" class="form-control"/>
+        </td>
+        <td ng-if="adtype == CreativeZone.types.IFRAME && editCZSwitch!==data.id" class="text-left">{{data.location}}</td>
+        <td ng-if="adtype == CreativeZone.types.IFRAME && editCZSwitch===data.id" class="text-left">
+          <select ng-model="editCZ.location" ng-options="czLoc.location for czLoc in czLocs" class="form-control">
+            <option value="">{{data.location}}</option>
+          </select>
+        </td>
+        <td ng-show="editCZSwitch!==data.id" class="text-left"><a href="">{{data.defaultRotationId}}</a></td>
+        <td ng-show="editCZSwitch===data.id" class="text-left col-sm-2">
+          <select ng-model="editCZ.defaultRotationId" ng-options="defaultRotation.id as defaultRotation.name for defaultRotation in defaultRotations" class="form-control"></select>
+        </td>
+        <td ng-if="adtype == CreativeZone.types.IFRAME && editCZSwitch!==data.id" class="text-right">{{data.width}}</td>
+        <td ng-if="adtype == CreativeZone.types.IFRAME && editCZSwitch===data.id" class="text-right">
+          <input ng-model="editCZ.width" class="form-control" type="number"/>
+        </td>
+        <td ng-if="adtype == CreativeZone.types.IFRAME && editCZSwitch!==data.id" class="text-right">{{data.height}}</td>
+        <td ng-if="adtype == CreativeZone.types.IFRAME && editCZSwitch===data.id" class="text-right">
+          <input ng-model="editCZ.height" class="form-control" type="number"/>
+        </td>
+        <td ng-show="editCZSwitch!==data.id" class="text-right">{{data.ownerId}}</td>
+        <td ng-show="editCZSwitch===data.id" class="text-right">
+          <input type="text" ng-model="editCZ.ownerId" class="form-control" ng-readonly="true"/>
+        </td>
+        <td ng-show="editCZSwitch!==data.id" class="text-right">{{data.sfw=="1"?"Yes":"No"}}</td>
+        <td ng-show="editCZSwitch===data.id" class="text-right">
+          <input ng-click="editCZ.sfw!=editCZ.sfw" ng-model="editCZ.sfw" ng-checked="editCZ.sfw==='1'" type="checkbox"/>
+        </td>
+        <td ng-show="editCZSwitch!=data.id" class="text-right">{{data.enabled==1? "Yes":"No"}}</td>
+        <td ng-show="editCZSwitch==data.id" class="text-right">
+          <input ng-click="editCZ.enabled!=editCZ.enabled" ng-model="editCZ.enabled" ng-checked="editCZ.enabled==='1'" type="checkbox"/>
+        </td>
+        <td class="text-right">
+          <san-crud-buttons
+            edit="editCZSwitchCtrl(data)"
+            delete="czConfirmDeleteSwitchCtrl(data.id)"
+            save="saveCZ(editCZ)"
+            cancel="editCZSwitchCancel()">
+          </san-crud-buttons>
+        </td>
+      </tr>
+      <tr ng-repeat-end ng-if="czConfirmDeleteSwitch===data.id">
+        <td colspan="10">
+          <san-confirm
+            active="czConfirmDeleteSwitch"
+            cancel="czConfirmDeleteSwitchCancel()"
+            confirm="deleteCZ(data.id)"
+            confirm-text="Delete Template Variable {{data.name}}">
+            <p>Are you sure you wish to delete creative zone &quot;{{data.name}}&quot; from this publisher?</p>
+          </san-confirm>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

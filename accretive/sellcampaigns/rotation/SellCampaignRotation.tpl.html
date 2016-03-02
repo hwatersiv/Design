@@ -1,0 +1,56 @@
+<div class="col-sm-12 info-box">
+  <h3 class="col-sm-6 noPadding noMargin">{{sellCampaign.name}} Rotation</h3>
+  <a ng-click="newTempVarSwitchCtrl()" class="col-sm-2 btn btn-xs btn-primary pull-right">**link a rotation ?**</a>
+</div>
+<san-confirm
+  active="deleteAlert"
+  cancel="deleteAlert=false"
+  confirm="deleteRotation(rotation.id)"
+  confirm-text="Delete Rotation {{rotation.name}}">
+    <p>Are you sure you wish to delete this rotation?</p>
+    <h3 class="col-sm-offset-1">{{sellCampaign.rotation.name}}</h3>
+</san-confirm>
+<div class="col-sm-6 info-box">
+  <san-field-group>
+    <san-field label="Rotation ID" model="sellCampaign.rotation.id"></san-field>
+    <san-field label="Rotation Name" model="sellCampaign.rotation.name" type="text"></san-field>
+    <san-field label="Type" model="sellCampaign.rotation.typeName"></san-field>
+    <san-field label="Resell Rotation" model="sellCampaign.rotation.resellRotation" type="checkbox"></san-field>
+    <san-field label="Enabled" model="sellCampaign.rotation.enabled" type="checkbox"></san-field>
+    <san-field label="Created By" model="'Stormageddon Dark Lord of All'"></san-field>
+  </san-field-group>
+</div>
+<hr class="col-sm-12 noPadding">
+
+<!-- Creatives -->
+
+<div class="col-sm-12 noPadding">
+  <div class="col-sm-12">
+    <h3 class="col-sm-4 noPadding noMargin">Creatives</h3>
+    <a ng-click="linkCreative()" class="col-sm-2 btn btn-xs btn-primary pull-right">Add Creative</a>
+  </div>
+  <div class="table-responsive col-sm-12">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="text-left">Creative</th>
+          <th class="text-left">Type</th>
+          <th class="text-right">Weight</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="creative in sellCampaign.rotation.creatives">
+          <td class="col-sm-4 text-left"><a target="_blank" href="{{createCreativeLinkUrl(creative.contentPath, creative.typeId)}}">{{creative.name}}</a></td>
+          <td class="text-left">{{creative.typeName}}</td>
+          <td class="text-right">{{creative.weight}}</td>
+          <td class="text-right">
+            <button class="btn btn-danger btn-xs" ng-click="unlinkCreative(creative)">Unlink</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<pre>{{sellCampaign|json}}</pre>

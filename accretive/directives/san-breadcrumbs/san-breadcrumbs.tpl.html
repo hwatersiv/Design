@@ -1,0 +1,5 @@
+<ol class="breadcrumb">
+    {{crumb}}
+    <li ng-repeat="crumb in crumbs"><a href="{{ crumb.href }}">{{ crumb.name }}</a></li>
+    <ng-transclude></ng-transclude>
+</ol>

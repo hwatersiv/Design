@@ -1,0 +1,121 @@
+<div class="container">
+  <div class="row" ng-init="init(Inventory.BUY_CAMPAIGN)">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-sm-7 col-md-7">
+            <h4>Buy Campaigns</h4>
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <div ng-show="showSearch()" class="input-group">
+              <input type="text" class="form-control" ng-model="search_filter.term" ng-change="refresh()" placeholder="Search..."/>
+              <span class="input-group-btn">
+                  <button ng-click="search_filter.term='';refresh()" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
+              </span>
+            </div>
+          </div>
+          <div class="col-sm-2 col-md-2" style="text-align: right;">
+            <button ng-click="createNewBuyCam=true" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> New Buy Campaign</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <!--New Entity -->
+        <div ng-if="createNewBuyCam">
+          <div
+              ng-controller="EditInventoryCtrl"
+              ng-init="init(
+                           Inventory.BUY_CAMPAIGN, null, parentEntityName, parentEntityData,
+                           $parent.getOnSaved($parent.$parent, 'createNewBuyCam'),
+                           $parent.getOnCanceled($parent.$parent, 'createNewBuyCam'))">
+            <!-- Error Handling -->
+            <div ng-if="alerts.length >= 1" ng-show="alerts.show" ng-include src="'/ui/src/app/inventory/templates/alert.tpl.html'"></div>
+            <!-- New Entry -->
+            <div ng-show="open()" ng-include src="'/ui/src/app/inventory/templates/edit_buycampaign.tpl.html'"></div>
+          </div>
+        </div>
+        <!-- Error Handling -->
+        <div ng-if="alerts.length >= 1" ng-show="alerts.show" ng-include src="'/ui/src/app/inventory/templates/alert.tpl.html'"></div>
+
+        <!-- Main Table -->
+        <table class="ng-table table">
+          <thead>
+          <tr>
+            <th ng-click="sort('id', $event)" class="inventory-id-header" ng-class="getHeaderCssClass('id')" style="text-align: left;"><div>Id</div></th>
+            <th ng-click="sort('name', $event)" class="inventory-name-header" ng-class="getHeaderCssClass('name')" style="text-align: left;"><div>Name</div></th>
+            <th ng-click="sort('startDate', $event)" class="inventory-date-header" ng-class="getHeaderCssClass('startDate')" style="text-align: left;"><div>Start Date</div></th>
+            <th ng-click="sort('endDate', $event)" class="inventory-date-header" ng-class="getHeaderCssClass('endDate')" style="text-align: left;"><div>End Date</div></th>
+            <th class="col-md-1">
+                <input type="checkbox" ng-model="disabled" ng-change="refresh()" class="col-md-1" style="margin:0;"/>
+                <h6 class="col-md-7" style="margin:0;">
+                    <a ng-click="disabled=!disabled;refresh()">Hide Disabled</a>
+                </h6>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat-start="row in tableData">
+            <td ng-class="getRowCss(row)" style="text-align: left;">{{row.id==null?"Not Yet Saved":row.id}}</td>
+            <td ng-class="getRowCss(row)" style="text-align: left;">{{row.name}}</td>
+            <td ng-class="getRowCss(row)" style="text-align: left;">{{(row.startDate * 1000) | date: 'd MMM, yyyy'}}</td>
+            <td ng-class="getRowCss(row)" style="text-align: left;">{{(row.endDate * 1000) | date: 'd MMM, yyyy'}}</td>
+            <!-- Buttons -->
+            <td style="width:10px">
+              <div ng-click="row.confirmDelete=!row.confirmDelete">
+                <button class="remove btn btn-xs btn-default" tooltip-placement="right" tooltip="Remove" style="vertical-align: top;">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </div>
+              <div>
+                <button ng-click="row.editRow=true" class="edit btn btn-xs btn-default" tooltip-placement="right" tooltip="Edit">
+                  <span class="glyphicon glyphicon-edit"></span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <!--Remove Alert-->
+          <tr class="danger" ng-show="row.confirmDelete">
+            <td class="alert" colspan="5">Are you sure you would like to delete this item
+              <button ng-click="delete(row.id);row.confirmDelete=!row.confirmDelete" class="btn btn-default">Yes</button>
+              <button ng-click="row.confirmDelete=!row.confirmDelete" class="btn btn-default">No</button>
+            </td>
+          </tr>
+          <!-- Edit Buy Campaign-->
+          <tr ng-repeat-end class="well">
+            <td ng-if="row.editRow" colspan="5">
+              <div
+                  ng-controller="EditInventoryCtrl"
+                  ng-init="init(
+                               Inventory.BUY_CAMPAIGN, row, parentEntityName, parentEntityData,
+                               $parent.getOnSaved(row, 'editRow'),
+                               $parent.getOnCanceled(row, 'editRow'))">
+
+                <!-- Error Handling -->
+                <div ng-if="alerts.length >= 1" ng-show="alerts.show" ng-include src="'/ui/src/app/inventory/templates/alert.tpl.html'"></div>
+                <div ng-show="open()" ng-include src="'/ui/src/app/inventory/templates/edit_buycampaign.tpl.html'"></div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr ng-if="showPageCount()">
+            <td colspan="5" style="border-left-style: none;border-right-style: none;border-bottom-style: none">
+              <div class="btn-group pull-right">
+                <button type="button" ng-click="setPageCount(10)" class="btn btn-default btn-xs" ng-class="{active: count == 10}"> 10 </button>
+                <button type="button" ng-click="setPageCount(25)" class="btn btn-default btn-xs" ng-class="{active: count == 25}"> 25 </button>
+                <button type="button" ng-click="setPageCount(50)" class="btn btn-default btn-xs" ng-class="{active: count == 50}"> 50 </button>
+                <button type="button" ng-click="setPageCount(100)" class="btn btn-default btn-xs" ng-class="{active: count == 100}"> 100 </button>
+              </div>
+              <ul class="pagination btn-group pull-left">
+                <li ng-repeat="page in pages" ng-class="{'disabled': !page.active}">
+                  <a ng-click="setPage(page.number)">{{page.label}}</a>
+                </li>
+              </ul>
+            </td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,128 @@
+<div class="container">
+  <div class="row" ng-init="init(Inventory.PUBLISHER)">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <div class="row">
+          <div class="col-sm-7 col-md-7">
+            <h4>Publishers</h4>
+          </div>
+          <div class="col-sm-3 col-md-3">
+            <div ng-show="showSearch()" class="input-group">
+              <input type="text" class="form-control" ng-model="search_filter.term" ng-change="refresh()" placeholder="Search..."/>
+              <span class="input-group-btn">
+                  <button ng-click="search_filter.term='';refresh()" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
+              </span>
+            </div>
+          </div>
+          <div class="col-sm-2 col-md-2" style="text-align: right;">
+            <button ng-click="createNewPub=true" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> New Publisher</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <!--New Creative Zone Entry-->
+        <div ng-if="createNewPub">
+          <div class="col-sm-12 col-md-12"
+               ng-controller="EditInventoryCtrl"
+               ng-init="init(
+                          Inventory.PUBLISHER, null, null, null,
+                          $parent.getOnSaved($parent.$parent, 'createNewPub'),
+                          $parent.getOnCanceled($parent.$parent, 'createNewPub'))">
+            <!-- Error Handling -->
+            <div ng-if="alerts.length >= 1" ng-show="alerts.show" ng-include src="'/ui/src/app/inventory/templates/alert.tpl.html'"></div>
+            <!-- New Entry -->
+            <div ng-show="open()" ng-include src="'/ui/src/app/inventory/templates/edit_publisher.tpl.html'"></div>
+          </div>
+        </div>
+        <!-- Error Handling -->
+        <div ng-if="alerts.length >= 1" ng-show="alerts.show" ng-include src="'/ui/src/app/inventory/templates/alert.tpl.html'"></div>
+
+        <!-- Main Table -->
+        <table class="ng-table table">
+          <thead>
+          <tr>
+            <th ng-click="sort('id', $event)" class="default-cell" ng-class="getHeaderCssClass('id')" style="text-align: left;"><div>Id</div></th>
+            <th ng-click="sort('name', $event)" class="default-cell" ng-class="getHeaderCssClass('name')" style="text-align: left;"><div>Name</div></th>
+            <th ng-click="sort('ourUrl', $event)" class="default-cell" ng-class="getHeaderCssClass('ourUrl')" style="text-align: left;"><div>Our URL</div></th>
+            <th ng-click="sort('publisherUrl', $event)" class="default-cell" ng-class="getHeaderCssClass('publisherUrl')" style="text-align: left;"><div>Publisher URL</div></th>
+            <th ng-click="sort('ownerId', $event)" class="default-cell" ng-class="getHeaderCssClass('OwnerId')" style="text-align: right;"><div>Owner ID</div></th>
+            <th ng-click="sort('isNetwork', $event)" class="default-cell" ng-class="getHeaderCssClass('isNetwork')" style="text-align: right;"><div>Is Network</div></th>
+            <th ng-if="disabled==false" ng-click="sort('enabled', $event)" class="default-cell" ng-class="getHeaderCssClass('enabled')" style="text-align: right;"><div>Enabled</div></th>
+            <th class="col-md-1">
+                <input type="checkbox" ng-model="disabled" ng-change="refresh()" class="col-md-1" style="margin:0;"/>
+                <h6 class="col-md-7" style="margin:0;">
+                    <a ng-click="disabled=!disabled;refresh()">Hide Disabled</a>
+                </h6>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat-start="row in tableData">
+              <td ng-class="getRowCss(row)" class="text-left">{{row.id==null?"Not Yet Saved":row.id}}</td>
+              <td ng-class="getRowCss(row)" class="text-left">{{row.name}}</td>
+              <td ng-class="getRowCss(row)" class="text-left">{{row.ourUrl}}</td>
+              <td ng-class="getRowCss(row)" class="text-left">{{row.publisherUrl}}</td>
+              <td ng-class="getRowCss(row)" class="text-right">{{row.ownerId}}</td>
+              <td ng-class="getRowCss(row)" class="text-right">{{(row.isNetwork == 0? "No":"Yes")}}</td>
+              <td ng-if="disabled==false" ng-class="getRowCss(row)" class="text-right">{{(row.enabled == 0? "No":"Yes")}}</td>
+              <!-- Buttons -->
+              <td class="col-md-2">
+                <div class="col-sm-12 col-md-12" ng-click="row.confirmDelete=!row.confirmDelete">
+                  <button class="remove btn btn-xs btn-default col-sm-2 col-md-2" tooltip-placement="right" tooltip="Remove" style="vertical-align: top;">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </button>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                  <button ng-click="row.editRow=true" class="edit btn btn-xs btn-default col-sm-2 col-md-2" tooltip-placement="right" tooltip="Edit">
+                    <span class="glyphicon glyphicon-edit"></span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <!--Remove Creative Zone Alert-->
+            <tr class="danger" ng-show="row.confirmDelete">
+              <td class="alert" colspan="8">
+                <p class="col-md-3">Are you sure you would like to delete this item?</p>
+                <button ng-click="delete(row.id);row.confirmDelete=!row.confirmDelete" class="btn btn-default">Yes</button>
+                <button ng-click="row.confirmDelete=!row.confirmDelete" class="btn btn-default">No</button>
+              </td>
+            </tr>
+            <!-- Edit Creative Zone -->
+            <tr ng-repeat-end class="well">
+              <td ng-if="row.editRow" colspan="8">
+                <div class="col-sm-12 col-md-12"
+                     ng-controller="EditInventoryCtrl"
+                     ng-init="init(
+                                Inventory.PUBLISHER, row, null, null,
+                                $parent.getOnSaved(row, 'editRow'),
+                                $parent.getOnCanceled(row, 'editRow'))">
+
+                  <!-- Error Handling -->
+                  <div ng-if="alerts.length >= 1" ng-show="alerts.show" ng-include src="'/ui/src/app/inventory/templates/alert.tpl.html'"></div>
+                  <div ng-show="open()" ng-include src="'/ui/src/app/inventory/templates/edit_publisher.tpl.html'"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+          <tr ng-if="showPageCount()">
+            <td colspan="8" style="border-left-style: none;border-right-style: none;border-bottom-style: none">
+              <div class="btn-group pull-right">
+                <button type="button" ng-click="setPageCount(10)" class="btn btn-default btn-xs" ng-class="{active: count == 10}"> 10 </button>
+                <button type="button" ng-click="setPageCount(25)" class="btn btn-default btn-xs" ng-class="{active: count == 25}"> 25 </button>
+                <button type="button" ng-click="setPageCount(50)" class="btn btn-default btn-xs" ng-class="{active: count == 50}"> 50 </button>
+                <button type="button" ng-click="setPageCount(100)" class="btn btn-default btn-xs" ng-class="{active: count == 100}"> 100 </button>
+              </div>
+              <ul class="pagination btn-group pull-left">
+                <li ng-repeat="page in pages" ng-class="{'disabled': !page.active}">
+                  <a ng-click="setPage(page.number)">{{page.label}}</a>
+                </li>
+              </ul>
+            </td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

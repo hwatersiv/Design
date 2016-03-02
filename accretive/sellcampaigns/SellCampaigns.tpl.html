@@ -1,0 +1,15 @@
+<san-sidebar
+  class="col-sm-3"
+  data="SellCampaign.sellCampaigns"
+  desturl="$state.href('SellCampaignsUIRoot.single',{ id:id })">
+</san-sidebar>
+
+<div class="col-sm-9">
+  <!-- Breadcrumbs and common navigation element -->
+  <san-breadcrumbs>
+    <li class="noncrumb pull-right"><a class="btn btn-xs btn-primary" ui-sref="SellCampaignsUIRoot.create">New Sell Campaign</a></li>
+  </san-breadcrumbs>
+  <alert ng-repeat="alert in Notification.messages" type="{{alert.type}}" close="Notification.closeAlert($index)">{{alert.msg}}</alert>
+  <!-- Child views -->
+  <div ui-view="content"></div>
+</div>

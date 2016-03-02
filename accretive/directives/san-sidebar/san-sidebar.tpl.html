@@ -1,0 +1,24 @@
+<div class="form-group">
+  <san-filter filter="searchFilter">
+</div>
+
+<div class="list-group">
+
+    <a ng-repeat="item in data | orderBy:'name' | filter:searchFilter | filter: onPage" ng-class="{ active: isActive(item.id) }" href="{{desturl({id:item.id,item:item})}}" class="list-group-item">{{item.name | limitTo:75}}</a>
+
+</div>
+<nav class="text-center">
+  <pagination
+      total-items="data.length"
+      items-per-page="itemsPerPage"
+      ng-model="currentPage"
+      ng-change="pageChanged()"
+      previous-text="&lsaquo;"
+      next-text="&rsaquo;"
+      first-text="&laquo;"
+      last-text="&raquo;"
+      max-size="maxSize"
+      class="pagination-sm smMargin"
+      boundary-links="true">
+  </pagination>
+</nav>

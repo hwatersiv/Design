@@ -1,0 +1,106 @@
+<san-confirm
+  active="deleteAlert"
+  cancel="deleteAlert=false"
+  confirm="deletePublisher(pub.id)"
+  confirm-text="Delete Publisher {{pub.name}}">
+    <p>Are you sure you wish to delete this publisher?</p>
+    <h3 class="col-sm-offset-1">{{pub.name}}</h3>
+</san-confirm>
+<div class="col-sm-6 info-box">
+  <san-field-group>
+    <san-field label="Publisher ID" model="pub.id"></san-field>
+    <san-field label="Publisher Name" model="pub.name" edit-var="pubEdit" type="text" required="true"></san-field>
+    <san-field label="Our Url" model="pub.ourUrl" edit-var="pubEdit" type="text" required="true"></san-field>
+    <san-field label="Publisher Url" model="pub.publisherUrl" edit-var="pubEdit" type="text" required="true"></san-field>
+    <san-field label="Enabled" model="pub.enabled" edit-var="pubEdit" type="checkbox" required="true"></san-field>
+    <san-field label="Is Network" model="pub.isNetwork" edit-var="pubEdit" type="checkbox" required="true"></san-field>
+<!--     <san-field label="Created At" model="pub.createDate" type="date"></san-field> -->
+    <san-field label="Created By" model="'Stormageddon Dark Lord of All'"></san-field>
+   <!--  <san-field label="Last Updated" model="pub.versionNumber" type="date"></san-field> -->
+  </san-field-group>
+</div>
+<div class="info-box text-right">
+  <san-crud-buttons
+    edit="pubEditSwitch()"
+    delete="deleteAlert=true"
+    save="save(pub)"
+    cancel="pubEditSwitch()">
+  </san-crud-buttons>
+</div>
+
+<hr class="col-sm-12 noPadding"/>
+
+<!--Template Variables-->
+
+<div class="row">
+  <div class="col-sm-12">
+    <h3 class="col-sm-4 noPadding noMargin">Template Variables</h3>
+    <a ng-click="newTempVarSwitchCtrl()" class="col-sm-2 btn btn-xs btn-primary pull-right">Add Template Variable</a>
+  </div>
+  <san-confirm
+    class="col-sm-12"
+    active="tempVarConfirmDelete"
+    cancel="!tempVarConfirmDelete"
+    confirm="deletePubTempVar(deletingTempVar.id)"
+    confirm-text="Delete Template Variable {{deletingTempVar.name}}">
+      <p>Are you sure you wish to delete template variable &quot;{{deletingTempVar.name}}&quot; from this publisher?</p>
+  </san-confirm>
+  <div class="col-sm-12 table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Argument Key</th>
+          <th>Value</th>
+          <th>Creative Zones</th>
+          <th>Publishers</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-if="newTempVarSwitch" ng-form="newTempVarForm" novalidate>
+          <td>New</td>
+          <td><select ng-options="varType.id as varType.name for varType in filteredTypes" ng-model="newTempVar.typeId" class="form-control"></select></td>
+          <td>{{newTempVar.argumentKey}}</td>
+          <td><input ng-model="newTempVar.value" type="text" class="form-control" required></td>
+          <td></td>
+          <td></td>
+          <td>
+            <button ng-click="savePubTempVar(newTempVar)" ng-disabled="newTempVarForm.$invalid" class="btn btn-primary btn-xs">Create New</button>
+            <button ng-click="newTempVarSwitchCtrl()" class="btn btn-default btn-xs">Cancel</button>
+          </td>
+        </tr>
+        <tr ng-repeat="tempVar in pubTempVars">
+          <td>{{tempVar.id}}</td>
+          <td>
+            <div>{{tempVar.typeName}}</div>
+          </td>
+          <td>
+            <div>{{tempVar.argumentKey}}</div>
+          </td>
+          <td ng-show="tempVarEdit!==tempVar.id">
+            <div >{{tempVar.value}}</div>
+          </td>
+          <td ng-show="tempVarEdit==tempVar.id">
+            <input  ng-model="editTempVar.value" type="text" class="form-control"/>
+          </td>
+          <td>
+            <div>{{tempVar.creativeZonesList}}</div>
+          </td>
+          <td>
+            <div>{{tempVar.publishersList}}</div>
+          </td>
+          <td class="text-right">
+            <san-crud-buttons
+              edit="tempVarEditSwitch(tempVar)"
+              delete="tempVarConfirmDeleteSwitch(tempVar)"
+              save="savePubTempVar(tempVar)"
+              cancel="cancelTempVarEdit()">
+            </san-crud-buttons>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

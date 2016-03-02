@@ -1,0 +1,47 @@
+<san-confirm
+  active="deleteAlert"
+  confirm="advertiser.enabled=false; deleteAdvertiser(advertiser.id)"
+  confirm-text="Delete Advertiser {{advertiser.id}}">
+    <p>Are you sure you wish to delete &quot;<strong>{{advertiser.name}}</strong>&quot; Advertiser?</p>
+</san-confirm>
+<san-crud-buttons
+  class="pull-right"
+  edit="advertiserEditSwitch()"
+  delete="deleteAlert=true"
+  save="save(advertiser)"
+  cancel="advertiserEditSwitch()">
+</san-crud-buttons>
+<div class="col-sm-10">
+  <san-field-group>
+    <san-field label="Name" model="advertiser.name" type="text" edit-var="advertiserEdit" required="true"></san-field>
+    <san-field label="Enabled" model="advertiser.enabled" type="checkbox" edit-var="advertiserEdit" required="true"></san-field>
+  </san-field-group>
+</div>
+<hr class="col-sm-12"/>
+<div class="col-sm-12 noPadding">
+  <h3 class="col-sm-4 noPadding noMargin">Campaigns</h3>
+</div>
+<table class="table">
+  <thead>
+  <tr>
+    <td><strong><div>ID</div></strong></td>
+    <td><strong><div>Name</div></strong></td>
+    <td><strong><div>Rule Set</div></strong></td>
+    <td><strong><div>Start Date</div></strong></td>
+    <td><strong><div>End Date</div></strong></td>
+    <td><strong><div>State</div></strong></td>
+    <td><strong><div>Enabled</div></strong></td>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="campaign in campaigns">
+    <td ng-bind="campaign.id" class="cellleft"></td>
+    <td ng-bind="campaign.name" class="cellleft"></td>
+    <td ng-bind="campaign.ruleSet.name" class="cellleft"></td>
+    <td ng-bind="campaign.startDate | date: 'shortDate'" class="cellright"></td>
+    <td ng-bind="campaign.endDate" class="cellright"></td>
+    <td ng-bind="campaign.state" class="cellright"></td>
+    <td ng-bind="campaign.enabled" class="cellright"></td>
+  </tr>
+  </tbody>
+</table>

@@ -1,0 +1,14 @@
+<div class="noPadding col-sm-12">
+  <button ng-hide="dropdown" ng-click="dropdownSwitch()" class="btn btn-default" style="white-space: normal">
+    {{linkingCreative.name? linkingCreative.name:"Select a Creative"}}<i class="fa fa-caret-down pull-right"></i>
+  </button>
+  <input ng-show="dropdown" ng-model="linkingCreative" class="form-control" type="text">
+    <div ng-show="dropdown" style="overflow:auto;height: 200px;border: solid lightgrey 1px;border-radius: 5px; padding: 5px;">
+      <ul class="noPadding" style="list-style-type: none;">
+        <li ng-repeat="creative in Creative.creatives | filter: linkingCreative" ng-click="selectCreative(creative)">
+          {{creative.name}}
+          <hr style="margin-top:5px; margin-bottom:5px;">
+        </li>
+      </ul>
+    </div>
+</div>

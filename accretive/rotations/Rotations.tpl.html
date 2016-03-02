@@ -1,0 +1,15 @@
+<san-sidebar
+  class="col-sm-3"
+  data="Rotation.rotations"
+  desturl="$state.href('RotationsUIRoot.single',{ id:id })">
+</san-sidebar>
+
+<div class="col-sm-9">
+  <!-- Breadcrumbs and common navigation element -->
+  <san-breadcrumbs>
+    <li class="noncrumb pull-right"><a class="btn btn-xs btn-primary" ui-sref="RotationsUIRoot.create">New Rotation</a></li>
+  </san-breadcrumbs>
+  <alert ng-repeat="alert in Notification.messages" type="{{alert.type}}" close="Notification.closeAlert($index)">{{alert.msg}}</alert>
+  <!-- Child views -->
+  <div ui-view="content"></div>
+</div>

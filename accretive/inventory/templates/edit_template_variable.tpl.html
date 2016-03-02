@@ -1,0 +1,63 @@
+<div class="col-md-4">
+    <fieldset>
+        <legend ng-if="entityEditableData.id == null" style="background-color: #D9EDF7;">New Template Variable {{entityEditableData.id}}</legend>
+        <legend ng-if="entityEditableData.id != null" style="background-color: #D9EDF7;">Edit Template Variable {{entityEditableData.id}}</legend>
+        <form name="form">
+          <div class="form-group">
+            <label class="label-control">Type</label>
+            <select class="form-control"  ng-model="entityEditableData.typeId" name="type"
+                    ng-options="type.typeId as type.typeName for type in entityEditableData.options.typeId" required>
+            </select>
+            <span ng-class="{ invalid : form.type.$invalid, valid : form.type.$valid }">Type is required</span>
+          </div>
+          <div class="form-group">
+            <label>Value</label>
+            <input ng-model="entityEditableData.value" class="form-control" type="text" placeholder="{{entityEditableData.value}}" />
+          </div>
+
+          <div class="form-group" ng-if="!isNested()">
+            <label>Creative Zone(s)</label>
+            <select style="width:100%" ui-select2 multiple
+                    name="creativeZone"
+                    ng-model="entityEditableData.creativeZoneId"
+                    data-placeholder="Choose creative zone(s)"
+                    ng-required="!entityEditableData.creativeZoneId.length && !entityEditableData.publisherId.length">
+              <option ng-repeat="cz in entityEditableData.options.creativeZoneId"
+                      value="{{cz.id}}">
+                {{cz.name}}
+              </option>
+            </select>
+            <span ng-class="{ invalid : form.creativeZone.$invalid, valid : form.creativeZone.$valid }">Creative Zone(s) is required</span>
+          </div>
+
+
+          <div class="form-group" ng-if="!isNested()">
+            <label>Publisher(s)</label>
+            <select style="width:100%" ui-select2 multiple
+                    name="publisher"
+                    ng-model="entityEditableData.publisherId"
+                    data-placeholder="Choose publisher(s)"
+                    ng-required="!entityEditableData.creativeZoneId.length && !entityEditableData.publisherId.length">
+              <option ng-repeat="publisher in entityEditableData.options.publisherId"
+                      value="{{publisher.id}}">
+                {{publisher.name}}
+              </option>
+            </select>
+            <span ng-class="{ invalid : form.publisher.$invalid, valid : form.publisher.$valid }">Publisher(s) is required</span>
+          </div>
+
+          <!--
+              when the form is opened in the context of another entity e.g. CZ upon
+              save we don't send the data directly to the database, instead we only
+              update the memory record. Therefore we have to update the typeName
+              and argumentKey to make sure it displays correctly in the list table
+          -->
+          <button
+              ng-click="entityEditableData.typeName=Inventory.getOptionByProperty(entityEditableData.options.typeId, 'typeId', entityEditableData.typeId).typeName;
+              entityEditableData.argumentKey=Inventory.getOptionByProperty(entityEditableData.options.typeId, 'typeId', entityEditableData.typeId).argumentKey;
+              save()" class="btn btn-primary" ng-disabled="disableSubmit() || form.$invalid">Save</button>
+          <button ng-click="cancel()" class="btn btn-default" ng-disabled="disableSubmit()">Cancel</button>
+
+        </form>
+    </fieldset>
+</div>

@@ -1,0 +1,37 @@
+<div class="col-md-4">
+  <san-field-group>
+  <san-field label="Creative Name" model="creative.name" type="text" edit-var="'true'" required="true"></san-field>
+  <san-field model="creative.typeId" label="Type" edit-var="'true'">
+    <select style="width:100%" ui-select2
+            name="typeId"
+            ng-model="creative.typeId"
+            data-placeholder="Choose Template Type">
+      <option ng-repeat="typeId in Creative.options.typeId"
+              value="{{typeId.typeId}}">
+        {{typeId.typeName}}
+      </option>
+    </select>
+  </san-field>
+
+  <san-field label="Sub Group Id" type="text" model="creative.subGroupId" edit-var="true" required="true"></san-field>
+  <san-field label="Width" type="text" model="creative.width" edit-var="true" required="true"></san-field>
+  <san-field label="Height" type="text" model="creative.height" edit-var="true" required="true"></san-field>
+  <san-field model="creative.creativeZoneLocation_code" label="Type" edit-var="'true'">
+    <select style="width:100%" ui-select2
+            name="Location"
+            ng-model="creative.creativeZoneLocation_code"
+            data-placeholder="Choose Template Type">
+      <option ng-repeat="location in Creative.options.creativeZoneLocation_code"
+              value="{{location.creativeZoneLocation_code}}">
+        {{location.location}}
+      </option>
+    </select>
+  </san-field>
+    <san-field label="Content Path (255)" type="text" model="creative.contentPath" edit-var="true" required="true"></san-field>
+    <san-field label="Enabled" type="checkbox" model="creative.enabled" edit-var="true" required="true"></san-field>
+  </san-field-group>
+<div class="col-sm-12 info-box text-right">
+  <button type="button" ng-click="saveNewCreative(creative)" class="btn btn-primary btn-xs"></span>Save</button>
+  <button type="button" ng-click="$state.go('CreativeUIRoot.index')" class="btn btn-default btn-xs">Cancel</button>
+</div>
+</div>

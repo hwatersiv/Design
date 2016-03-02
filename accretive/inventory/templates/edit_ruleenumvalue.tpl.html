@@ -1,0 +1,46 @@
+<div class="col-md-4">
+  <fieldset>
+    <legend ng-if="entityEditableData.id == null" style="background-color: #D9EDF7;">New Enum Value</legend>
+    <legend ng-if="entityEditableData.id != null" style="background-color: #D9EDF7;">Edit {{entityEditableData.typeName}} - {{entityEditableData.value}}</legend>
+    <form name="form">
+
+      <!--
+        For existing entities we don't allow to add the type since it is part of
+        the PK
+      -->
+      <div ng-if="!entityEditableData.versionNumber" class="form-group">
+        <label class="label-control">Type</label>
+        <ui-select ng-model="entityEditableData.typeId" theme="bootstrap" name="typeId" reset-search-input="false">
+          <ui-select-match placeholder="">{{$select.selected.typeName}}</ui-select-match>
+          <ui-select-choices repeat="types.typeId as types in entityEditableData.options.typeId | filter: $select.search">
+            <div ng-bind-html="types.typeName | highlight: $select.search"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+      <!--
+        For existing entities we don't allow to add the type since it is part of
+        the PK
+      -->
+      <div ng-if="!entityEditableData.versionNumber" class="form-group" ng-class="{ 'has-error' : form.value.$invalid && !form.value.$pristine }">
+        <label class="label-control">String</label>
+        <input type="text" class="form-control" ng-model="entityEditableData.value" name="value" placeholder="Enter string" required />
+        <span ng-if="form.value.$invalid && !form.value.$pristine" style="color: #a94442;">Value is required</span>
+      </div>
+
+      <div class="form-group" ng-class="{ 'has-error' : form.enumValue.$invalid && !form.enumValue.$pristine }">
+        <label class="label-control">Enum Value</label>
+        <input type="text" class="form-control" ng-model="entityEditableData.enumValue" name="enumValue" placeholder="Enter enum value" required />
+        <span ng-if="form.enumValue.$invalid && !form.enumValue.$pristine" style="color: #a94442;">Enum value is required</span>
+      </div>
+
+      <div class="form-group" ng-class="{ 'has-error' : form.enumDisplayString.$invalid && !form.enumDisplayString.$pristine }">
+        <label class="label-control">Display String</label>
+        <input type="text" class="form-control" ng-model="entityEditableData.enumDisplayString" name="enumDisplayString" placeholder="Enter display string"/>
+      </div>
+
+      <button ng-click="save()" class="btn btn-primary" ng-disabled="disableSubmit() || form.$invalid">Save</button>
+      <button ng-click="cancel()" class="btn btn-default" ng-disabled="disableSubmit()">Cancel</button>
+    </form>
+  </fieldset>
+</div>

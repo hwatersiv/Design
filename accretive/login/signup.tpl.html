@@ -1,0 +1,38 @@
+<div ng-controller="LoginCtrl" class="background">
+<div id="login-bg"></div>
+    <div class="row">
+        <div class="col-md-6 text-right">
+            <a href="#/login"><img alt="Sex Ad Network" class="logo" src="src/assets/img/header-logo.png"></a>
+        </div>
+        <div class="col-md-6 text-left">
+            <form class="col-md-5 loginform" name="signupForm">
+                <p ng-bind="date | date: 'EEEE, MMMM d, yyyy'" class="logindate"></p>
+                <div class="form-group">
+                    <input ng-model="user.username" class="form-control logininput" type="text" placeholder="Username"/>
+                </div>
+                <div class="form-group">
+                    <input ng-model="user.email" class="form-control logininput" type="email" placeholder="Email"/>
+                </div>
+                <div class="form-group">
+                    <input ng-model="user.password" class="form-control logininput" type="password" placeholder="Password"/>
+                </div>
+                <div class="form-group">
+                    <input confirm-for="user.password" ng-model="user.passwordConfirm" class="form-control logininput" type="password" placeholder="Confirm password"/>
+                </div>
+                <p ng-show="signupForm.$error.confirm" class="alert alert-danger">
+                    <span id="ucase" class="glyphicon glyphicon-remove"></span>
+                    Passwords do not match
+                </p>
+                <p ng-show="signupForm.$error.email" class="alert alert-danger">
+                    <span id="ucase" class="glyphicon glyphicon-remove"></span>Invalid email provided.
+                </p>
+                <p ng-show="!!message" class="alert alert-danger">{{message}}</p>
+                <button class="btn btn-block loginbtn" ng-disabled="signupForm.$invalid" ng-click="signup(user)">SIGNUP</button>
+                <div>
+                    <p class="signup-text text-center">Already have an account? <a class="" href="#/login">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

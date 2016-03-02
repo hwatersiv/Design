@@ -1,0 +1,36 @@
+<div class="col-sm-6 info-box">
+  <dl ng-form="newBuyCampaign" class="dl-horizontal">
+    <dt>Campaign Name:</dt>
+    <dd>
+      <div class="form-group field">
+        <input ng-model="buyCampaign.name" type="text" class="form-control" style="margin-top:0;" placeholder="Campaign Name" required>
+      </div>
+    </dd>
+    <dt>Company Name:</dt>
+    <dd>
+      <div class="form-group field">
+        <input ng-model="buyCampaign.companyName" type="text" class="form-control" style="margin-top:0;" placeholder="Company Name">
+      </div>
+    </dd>
+    <dt>Invoice:</dt>
+    <dd>
+      <div class="form-group field">
+        <input ng-model="buyCampaign.invoiceNumber" type="text" class="form-control" style="margin-top:0;" placeholder="Invoice Number">
+      </div>
+    </dd>
+    <dt>Contact:</dt>
+    <dd>
+      <div class="form-group field">
+        <input ng-model="buyCampaign.contactName" type="text" class="form-control" style="margin-top:0;" placeholder="Contact Name">
+      </div>
+    </dd>
+  </dl>
+</div>
+<div class="col-md-6">
+  <h4>Notes:</h4>
+  <textarea ng-model="buyCampaign.notes" rows="5" cols="56" id="TITLE"></textarea>
+</div>
+<div class="col-sm-12 info-box text-right">
+  <button type="button" ng-click="saveNewBuyCampaign(buyCampaign)" class="btn btn-primary btn-xs"></span>Save</button>
+  <button type="button" ng-click="$state.go('BuyCampaignsUIRoot.index')" class="btn btn-default btn-xs">Cancel</button>
+</div>

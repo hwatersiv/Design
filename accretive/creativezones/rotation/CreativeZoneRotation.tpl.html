@@ -1,0 +1,162 @@
+<div>
+  <h2>{{dRotation.id}}: {{dRotation.name}}</h2>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="text-left">Creative</th>
+          <th class="text-left">Type</th>
+          <th class="text-right">Weight</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="creative in dRotation.creatives">
+          <td class="text-left"><a target="_blank" href="{{createCreativeLinkUrl(creative.contentPath, creative.typeId)}}">{{creative.name}}</a></td>
+          <td class="text-left">{{creative.typeName}}</td>
+          <td class="text-right">{{creative.weight}}</td>
+          <td>
+            <!-- <div class="pull-right"> (not yet implemented)
+              <button ng-click="" class="btn btn-info btn-xs">Edit</button>
+              <button ng-click="" class="btn btn-danger btn-xs">Delete</button>
+            </div> -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- <hr/> -->
+
+<!-- Rule Set Rotations -->
+
+
+
+<!-- Removing the rule set rotations section from epic: DEV-18992. Current backend is not complete rendering the below unusable until we revisit this -->
+
+
+
+<!-- <div class="row">
+  <div class="col-sm-12 tp-btm-sm-margin">
+    <h2 class="noPadding noMargin">Rule Set Rotations <button ng-click="newRuleSetRotation=!newRuleSetRotation" class="btn btn-primary btn-xs pull-right" style="margin-top: 5px">New Rule Set</button></h2>
+  </div>
+</div>
+<div collapse="!newRuleSetRotation" ng-form="newRuleSetRot" class="row">
+  <div class="col-sm-7">
+    <div class="form-group">
+      <div class="col-sm-7 noPadding">
+        <input type="text" ng-model="newRotation" placeholder="Select a Rotation..." typeahead="rotation as rotation.name for rotation in Rotation.rotations | filter:newRotation:strict | limitTo: 10" typeahead-loading="loadingRotations" typeahead-wait-ms="250" class="form-control">
+      </div>
+      <button ng-show="!newRotation.id && newRotation.length>0" ng-click="saveNewRotation(newRotation)" class="btn btn-success only-hide create-margin">Create New Rotation</button>
+    </div>
+    <div ng-show="newRotation.id" class="form-group">
+      <div class="col-sm-7 noPadding">
+        <input type="text" ng-model="newRuleSet" ng-change="setRulesScope(newRuleSet)" placeholder="Select a Rule Set..." typeahead="ruleset as ruleset.name for ruleset in RuleSet.rulesets | filter:newRuleSet:strict | limitTo: 10" typeahead-loading="loadingRuleSets" typeahead-wait-ms="250" class="form-control">
+      </div>
+      <button ng-show="!newRuleSet.id && newRuleSet.length>0" ng-click="saveNewRuleSet(newRuleSet, newRotation)" class="btn btn-success only-hide create-margin">Create New Rule Set</button>
+    </div>
+  </div>
+  <div collapse="!newRuleSet" class="col-sm-12">
+    <div class="col-sm-12 info-btn-margin noPadding">
+      <h4 class="col-sm-11 noPadding noMargin">{{newRuleSet.name}} Rules</h4>
+      <button ng-click="createNewRuleSwitch(newRuleSet)" class="btn btn-primary btn-xs pull-right">New Rule</button>
+    </div>
+    <div class="col-sm-12 table-responsive noPadding">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th class="text-left">Type</th>
+          <th class="text-left">Is / Not</th>
+          <th class="text-right">Value</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody> -->
+        <!--New Rules-->
+          <!-- <tr ng-show="createNewRule">
+            <td class="text-left">
+              <select ng-model="newRule.typeId" ng-options="ruleType.typeId as ruleType.typeDisplayName for ruleType in filteredRuleOpt(newRuleSet)" class="form-control"></select>
+            </td>
+            <td class="text-left">
+              <input ng-init="newRule.isNegation=false" ng-model="newRule.isNegation" type="checkbox"/>
+            </td>
+            <td class="text-right">
+              <select style="width:100%" ng-model="newRule.value" ui-select2 multiple >
+                <option ng-repeat="ruleValue in getRuleValues(newRule.typeId)" value="{{ruleValue.value}}">
+                  {{ruleValue.displayName}} ({{ruleValue.value}})
+                </option>
+              </select>
+            </td>
+            <td class="text-right">
+              <button ng-click="prepNewRule(newRule)" class="btn btn-info btn-xs">Save</button>
+              <button ng-click="cancelCreateNewRule()" class="btn btn-default btn-xs">Cancel</button>
+            </td>
+          </tr>
+          <tr ng-repeat-start="rule in newRuleSet.rules" ng-disabled="!rule.enabled">
+            <td ng-hide="editRule==$id" class="text-left">{{rule.typeName}}</td>
+            <td ng-show="editRule==$id" class="text-left">
+              <select ng-model="eRule.typeId" ng-options="ruleType.typeId as ruleType.typeDisplayName for ruleType in Rule.ruleOptions" class="form-control"></select>
+            </td>
+            <td ng-hide="editRule==$id" class="text-left">{{rule.isNegation==false? "Is":"Is Not"}}</td>
+            <td ng-show="editRule==$id" class="text-left">
+              <input ng-model="eRule.isNegation" type="checkbox"/>
+            </td>
+            <td ng-hide="editRule==$id" class="text-right pre-spacing">{{rule.value}}</td>
+            <td ng-show="editRule==$id" class="text-right">
+              <select style="width:100%" ng-model="eRule.value" ui-select2 multiple >
+                <option ng-repeat="ruleValue in getRuleValues(eRule.typeId)" value="{{ruleValue.value}}">
+                  {{ruleValue.displayName}} ({{ruleValue.value}})
+                </option>
+              </select>
+            </td>
+            <td class="text-right">
+              <button ng-hide="editRule==$id" ng-click="editRuleSwitch($id, rule)" class="btn btn-info btn-xs">Edit</button>
+              <button ng-hide="editRule==$id" ng-click="removeRuleSwitch(rule.id)" class="btn btn-danger btn-xs">Delete</button>
+              <button ng-show="editRule==$id" ng-click="prepNewRule(eRule)" class="btn btn-info btn-xs">Save</button>
+              <button ng-show="editRule==$id" ng-click="cancelEditRuleSwitch()" class="btn btn-default btn-xs">Cancel</button>
+            </td>
+          </tr>
+          <tr ng-repeat-end ng-show="removeRuleAlert === rule.id">
+            <td colspan="4">
+              <alert type="danger">
+                <p>Are you sure you wish to delete this rule from this Rule Set?</p>
+                <button ng-click="deleteRule(rule)" class="btn btn-danger">Yes, Delete this rule</button>
+                <button ng-click="removeRuleSwitch()" class="btn btn-default">Cancel</button>
+              </alert>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-sm-12 text-right info-box">
+      <button ng-click="addRuleSetToCZ()" class="btn btn-success btn-xs">Create New Rule Set Rotation</button>
+      <button ng-click="cancelNewRuleSetRotation()" class="btn btn-default btn-xs">Cancel</button>
+    </div>
+  </div>
+</div>
+<hr/>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th class="text-left">Rule Set Name</th>
+        <th class="text-right">Rotation</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="ruleSet in cz.ruleSets">
+        <td class="text-left">
+          <a href="#/inventory/rulesets/{{ ruleSet.id }}">{{ruleSet.name}}</a>
+        </td>
+        <td class="text-right">
+          <a href="#/inventory/rotations/{{ ruleSet.rotation.id }}">{{ruleSet.rotation.name}}</a>
+        </td>
+        <td class="text-right">
+          <a ng-click="ruleSetDetails=!ruleSetDetails" href=""><i class="fa fa-angle-double-down fa-lg"></i></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+ -->

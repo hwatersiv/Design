@@ -1,0 +1,122 @@
+<san-confirm
+  active="deleteAlert"
+  cancel="deleteAlert=false"
+  confirm="deleteCZ(cz.id)"
+  confirm-text="Delete Creative Zone {{cz.name}}">
+    <p>Are you sure you wish to delete this creative zone?</p>
+    <h3 class="col-sm-offset-1">{{cz.name}}</h3>
+</san-confirm>
+<div class="col-sm-8 info-box">
+  <san-field-group>
+    <san-field label="Creative Zone ID" model="cz.id" type="text"></san-field>
+    <san-field label="Creative Zone Name" model="cz.name" edit-var="czEdit" type="text" required="true"></san-field>
+    <san-field label="Publisher" model="cz.publisher.name" edit-var="czEdit">
+      <select ng-model="cz.publisher" ng-options="publisher as publisher.name for publisher in Publisher.publishers" class="form-control" required>
+        <option value="">{{cz.publisherName}}</option>
+      </select>
+    </san-field>
+    <san-field label="Default Rotation" model="cz.defaultRotation.name" edit-var="czEdit">
+      <select ng-model="cz.defaultRotationId" ng-options="rotation.id as rotation.name for rotation in Rotation.rotations" class="form-control" required>
+      </select>
+    </san-field>
+    <san-field label="Type" model="CreativeZone.getStringForType(cz.typeId)" edit-var="czEdit">
+      <select ng-model="cz.typeId" ng-options="id as type for (type, id) in CreativeZone.types" class="form-control" required>
+        <option value="">{{CreativeZone.getStringForType(cz.typeId)}}</option>
+      </select>
+    </san-field>
+    <san-field ng-show="cz.typeId == CreativeZone.types.IFRAME" label="Width" model="cz.width" edit-var="czEdit" type="number" required="true"></san-field>
+    <san-field ng-show="cz.typeId == CreativeZone.types.IFRAME" label="Height" model="cz.height" edit-var="czEdit" type="number" required="true"></san-field>
+    <san-field label="Enabled" model="cz.enabled" edit-var="czEdit" type="checkbox" required="true"></san-field>
+    <san-field label="SFW" model="cz.sfw" edit-var="czEdit" type="checkbox" required="true"></san-field>
+<!--     <san-field label="Created At" model="pub.createDate" type="date"></san-field> -->
+    <san-field label="Created By" model="'Stormageddon Dark Lord of All'" type="text"></san-field>
+   <!--  <san-field label="Last Updated" model="pub.versionNumber" type="date"></san-field> -->
+   <san-field label="Email Template" model="cz.emailCodeTemplate" type="code"></san-field>
+   <san-field label="Email Code" model="cz.resolvedEmailCodeTemplate" type="code"></san-field>
+  </san-field-group>
+</div>
+<div class="info-box text-right">
+  <san-crud-buttons
+    edit="czEditSwitch()"
+    delete="deleteAlert=true"
+    save="save(cz)"
+    cancel="czEditSwitch()">
+  </san-crud-buttons>
+</div>
+
+<hr class="col-sm-12 noPadding"/>
+
+<!--Template Variables-->
+
+<div class="row">
+  <div class="col-sm-12">
+    <h3 class="col-sm-4 noPadding noMargin">Template Variables</h3>
+    <a ng-click="newTempVarSwitchCtrl()" class="col-sm-2 btn btn-xs btn-primary pull-right">Add Template Variable</a>
+  </div>
+  <san-confirm
+    class="col-sm-12"
+    active="tempVarConfirmDelete"
+    cancel="!tempVarConfirmDelete"
+    confirm="deletePubTempVar(deletingTempVar.id)"
+    confirm-text="Delete Template Variable {{deletingTempVar.name}}">
+      <p>Are you sure you wish to delete template variable &quot;{{deletingTempVar.name}}&quot; from this creative zone?</p>
+  </san-confirm>
+  <div class="col-sm-12 table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Argument Key</th>
+          <th>Value</th>
+          <th>Creative Zones</th>
+          <th>Publishers</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-if="newTempVarSwitch" ng-form="newTempVarForm" novalidate>
+          <td>New</td>
+          <td><select ng-options="varType.id as varType.name for varType in filteredTypes" ng-model="newTempVar.typeId" class="form-control"></select></td>
+          <td>{{newTempVar.argumentKey}}</td>
+          <td><input ng-model="newTempVar.value" type="text" class="form-control" required></td>
+          <td></td>
+          <td></td>
+          <td>
+            <button ng-click="saveCZTempVar(newTempVar)" ng-disabled="newTempVarForm.$invalid" class="btn btn-primary btn-xs">Create New</button>
+            <button ng-click="newTempVarSwitchCtrl()" class="btn btn-default btn-xs">Cancel</button>
+          </td>
+        </tr>
+        <tr ng-repeat="tempVar in czTempVars">
+          <td>{{tempVar.id}}</td>
+          <td>
+            <div>{{tempVar.typeName}}</div>
+          </td>
+          <td>
+            <div>{{tempVar.argumentKey}}</div>
+          </td>
+          <td ng-show="tempVarEdit!==tempVar.id">
+            <div >{{tempVar.value}}</div>
+          </td>
+          <td ng-show="tempVarEdit==tempVar.id">
+            <input  ng-model="editTempVar.value" type="text" class="form-control"/>
+          </td>
+          <td>
+            <div>{{tempVar.creativeZonesList}}</div>
+          </td>
+          <td>
+            <div>{{tempVar.publishersList}}</div>
+          </td>
+          <td class="text-right">
+            <san-crud-buttons
+              edit="tempVarEditSwitch($index)"
+              delete="tempVarConfirmDeleteSwitch(tempVar)"
+              save="saveCZTempVar(tempVar)"
+              cancel="cancelTempVarEdit()">
+            </san-crud-buttons>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

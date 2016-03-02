@@ -1,0 +1,32 @@
+<san-confirm
+  active="deleteAlert"
+  confirm="ruleEnumValue.enabled=false; deleteRuleEnumValue(ruleEnumValue.id)"
+  confirm-text="Delete RuleEnumValue {{ruleEnumValue.id}}">
+    <p>Are you sure you wish to delete &quot;<strong>{{ruleEnumValue.enumDisplayString}}</strong>&quot; RuleEnumValue?</p>
+</san-confirm>
+<san-crud-buttons
+  class="pull-right"
+  edit="ruleEnumValueEditSwitch()"
+  delete="deleteAlert=true"
+  save="save(ruleEnumValue)"
+  cancel="ruleEnumValueEditSwitch()">
+</san-crud-buttons>
+<div class="col-md-6">
+  <san-field-group>
+    <san-field ng-if="ruleEnumValueEdit" model="ruleEnumValue.typeId" label="Type" edit-var="'true'">
+      <select style="width:100%" ui-select2
+              name="RuleEnumTypes"
+              ng-model="ruleEnumValue.typeId"
+              data-placeholder="Choose Template Type">
+        <option ng-repeat="ruleEnumType in RuleEnumValue.ruleEnumTypes"
+                value="{{ruleEnumType.typeId}}">
+          {{ruleEnumType.typeDisplayName}}
+        </option>
+      </select>
+    </san-field>
+    <san-field label="Display String" model="ruleEnumValue.enumDisplayString" type="text" edit-var="ruleEnumValueEdit" required="true"></san-field>
+    <san-field label="Enum Value" model="ruleEnumValue.value" type="text" edit-var="ruleEnumValueEdit" required="true"></san-field>
+  </san-field-group>
+</div>
+<hr class="col-sm-12"/>
+<div class="clearfix"></div>

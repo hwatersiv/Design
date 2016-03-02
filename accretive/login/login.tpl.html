@@ -1,0 +1,23 @@
+<div ng-controller="LoginCtrl" id="login-bg" class="background container-fluid">
+    <div class="row">
+        <div class="col-md-6 text-right">
+            <a href="#/"><img alt="Sex Ad Network" class="logo" src="src/assets/img/header-logo.png"></a>
+        </div>
+        <div class="col-sm-6 text-left">
+            <form class="col-sm-5 loginform">
+                <p ng-bind="date | date: 'EEEE, MMMM d, yyyy'" class="logindate"></p>
+                <div class="form-group">
+                    <input ng-model="user.username" class="form-control logininput" type="text" placeholder="Username"/>
+                </div>
+                <div class="form-group">
+                    <input ng-model="user.password" class="form-control logininput" type="password" placeholder="Password"/>
+                </div>
+                <p ng-show="!!message" class="alert alert-danger">{{message}}</p>
+                <button class="btn btn-block loginbtn" ng-click="login(user)">LOGIN</button>
+                <div>
+                    <p class="signup-text text-center">Don't have an account? <a class="" href="#/signup">Sign up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

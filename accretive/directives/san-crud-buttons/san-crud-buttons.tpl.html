@@ -1,0 +1,4 @@
+<button ng-show="!toggleEdit" class="btn btn-xs btn-info" ng-click="toggleEdit=true; edit()">Edit</button>
+<button ng-show="!toggleEdit" class="btn btn-xs btn-danger" ng-click="delete()">Delete</button>
+<button ng-show="toggleEdit" class="btn btn-xs btn-info" ng-click="toggleEdit=false; save()">Save</button>
+<button ng-show="toggleEdit" class="btn btn-xs btn-default" ng-click="toggleEdit=false; cancel()">Cancel</button>
