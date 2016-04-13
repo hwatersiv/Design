@@ -1,0 +1,83 @@
+html{
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  background-color: #928A9A;
+}
+
+button {
+  float: right;
+  cursor: pointer;
+  color: white;
+  background-color: #E64C4C;
+  font-weight: bold;
+  border: 1px solid red;
+  border-radius: 5px;
+}
+
+.noteBox {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  text-align: center;
+}
+
+.noteList {
+  height: 10%;
+  overflow: auto;
+}
+
+.note {
+  height: auto;
+  width: 33%;
+  background-color: #FCFAC9;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  margin-left: 33%;
+  padding-top: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+  .note h3 {
+    margin: 0px;
+    border-bottom: solid 1px #9D9DF9;
+  }
+
+  .note p {
+    margin-top: 10px;
+    margin-bottom: 0px;
+  }
+
+.noteForm {
+  display: block;
+  margin-top: 20px;
+}
+  .title {
+    display: block;
+    margin-left: 43%;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    border: solid 1px grey;
+  }
+
+  .noteForm textarea {
+    display: block;
+    margin-left: 41%;
+    margin-bottom: 5px;
+    padding: 3px;
+    border-radius: 5px;
+  }
+
+  .button {
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: #1A83D8;
+    margin-left: 2%;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: solid 1px #000000;
+  }
