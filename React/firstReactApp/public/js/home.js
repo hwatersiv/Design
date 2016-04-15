@@ -34,6 +34,7 @@ var NoteBox = React.createClass({
     })
   },
   handleDeleteNote: function (id) {
+    console.log("in the App");
     $.ajax({
       url: this.props.url + "/" + id,
       dataType: 'json',
@@ -66,20 +67,20 @@ var NoteBox = React.createClass({
 });
 
 var NoteList = React.createClass({
-  deleteNote: function (id) {
-    console.log(id);
-    console.log(this);
+  deleteNote: function () {
+    console.log("In the list", this);
+
   },
   render: function () {
     var noteNodes = this.props.data.map(function (note) {
       return (
-        <Note name={note.name} key={note.id} deleteTask={this.deleteNote(note.id)}>
+        <Note name={note.name} key={note.id} id={note.id}>
          {note.message}
         </Note>
       )
     });
     return (
-      <div className="noteList">
+      <div className="noteList" deleteElement={this.deleteNote}>
         {noteNodes}
       </div>
     )
@@ -87,14 +88,15 @@ var NoteList = React.createClass({
 });
 
 var Note = React.createClass({
-  deleteRequest: function () {
-    this.props.deleteTask({delete: true});
+  deleteRequest: function (id) {
+    console.log(id);
+    console.log(parent);
   },
   render: function () {
     return (
       <div className="note">
         <h3 className="noteName">
-          {this.props.name.toString()}<button onClick={this.deleteRequest}>X</button>
+          {this.props.name.toString()}<button onClick={this.deleteRequest(this.props.id)}>X</button>
         </h3>
         <p>{this.props.children.toString()}</p>
       </div>
