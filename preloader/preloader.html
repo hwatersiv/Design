@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+<link rel="stylesheet" href="./preloader.css">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+  $(document).ready(function () {
+
+    var state = 0;
+
+    var images = [
+      "./origin1.png",
+      "./origin2.png",
+      "./origin3.png",
+      "./origin4.png"
+    ]
+    
+    function gameLoop () {
+
+      var monster = $('.one');
+
+      monster.attr('src', images[state])
+
+      ++state;
+
+      if(state > 3) {
+        state = 0
+      }
+
+      window.setTimeout(function () {
+        gameLoop()
+      }, 3000)
+    }
+
+    gameLoop();
+  
+  });
+  
+
+</script>
+</head>
+<body>
+  <div class="border">
+    <img class="one" src="./origin1.png" alt="png">
+  </div>
+</body>
+</html>

@@ -71,8 +71,8 @@ app.post('/api/notes', function(req, res) {
   });
 });
 
-app.delete('api/notes/:id', function (id) {
-  console.log(id);
+app.delete('api/notes/:id', function (req, res) {
+  console.log(req);
 });
 
 

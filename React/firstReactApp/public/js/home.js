@@ -33,21 +33,6 @@ var NoteBox = React.createClass({
       }.bind(this)
     })
   },
-  handleDeleteNote: function (id) {
-    console.log("in the App");
-    $.ajax({
-      url: this.props.url + "/" + id,
-      dataType: 'json',
-      type:'DELETE',
-      data: id,
-      success: function (res) {
-        console.log("success: ",res);
-      }.bind(this),
-      error: function (err) {
-        console.log("Error: ", err);
-      }.bind(this) 
-    })
-  },
   getInitialState: function () {
     return {data: []};
   },
@@ -59,7 +44,7 @@ var NoteBox = React.createClass({
     return (
       <div className="noteBox">
         <h1>Notes</h1> 
-        <NoteList data={this.state.data} onDeleteNote={this.handleDeleteNote}/>
+        <NoteList data={this.state.data}/>
         <NoteForm onPinNewNote={this.handleNewNote} />   
       </div>
     )
@@ -67,10 +52,6 @@ var NoteBox = React.createClass({
 });
 
 var NoteList = React.createClass({
-  deleteNote: function () {
-    console.log("In the list", this);
-
-  },
   render: function () {
     var noteNodes = this.props.data.map(function (note) {
       return (
@@ -80,7 +61,7 @@ var NoteList = React.createClass({
       )
     });
     return (
-      <div className="noteList" deleteElement={this.deleteNote}>
+      <div className="noteList">
         {noteNodes}
       </div>
     )
@@ -89,8 +70,19 @@ var NoteList = React.createClass({
 
 var Note = React.createClass({
   deleteRequest: function (id) {
-    console.log(id);
-    console.log(parent);
+    console.log("in the App");
+    $.ajax({
+      url: "/api/notes",
+      dataType: 'json',
+      type:'DELETE',
+      data: id,
+      success: function (res) {
+        console.log("success: ",res);
+      }.bind(this),
+      error: function (err) {
+        console.log("Error: ", err);
+      }.bind(this) 
+    })
   },
   render: function () {
     return (

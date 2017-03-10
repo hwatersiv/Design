@@ -1,0 +1,29 @@
+img {
+  height: auto;
+  width: 100px;
+  -webkit-animation: anim 3s infinite linear;
+  animation: anim 3s infinite linear;
+}
+
+@-webkit-keyframes anim {
+  from {-webkit-transform: rotateY(0deg);}
+  to {-webkit-transform: rotateY(360deg);}
+}
+
+@keyframes anim {
+  from {transform: rotateY(0deg);}
+  to {transform: rotateY(360deg);}
+}
+
+.border {
+  width: 105px;
+  height: 105px;
+  position: relative;
+  border: 3px solid #badb07;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.one {
+  margin-top: 10px;
+}
