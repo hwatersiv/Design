@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+<link rel="stylesheet" href="./preloader.css">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+
+  $(document).ready(function () {
+
+    var deg = 0;
+    var imgIndex = 0;
+    var countUp = true;
+
+    var images = [
+      "./preloader1.png",
+      "./preloader2.png",
+      "./preloader3.png",
+      "./preloader4.png",
+      "./preloader5.png",
+      "./preloader6.png",
+      "./preloader7.png",
+      "./preloader8.png"
+    ]
+    
+    function gameLoop () {
+      var circle = $('.border');
+      
+      // For webkit browsers: e.g. Chrome
+      circle.css({ WebkitTransform: 'rotate(' + deg + 'deg)'});
+      // For Mozilla browser: e.g. Firefox
+      circle.css({ '-moz-transform': 'rotate(' + deg + 'deg)'});
+
+
+      if((deg % 90) == 0) {
+        // console.log("deg: ", deg)
+
+        // console.log(images[imgIndex])
+
+        $('.one').attr('src', images[imgIndex])
+        // $('.two').attr('src', picture6)
+        // $('.three').attr('src', picture7)
+        // $('.four').attr('src', picture1)
+        ++imgIndex;
+      }
+
+      // console.log(deg)
+      // console.log(imgIndex)
+      if(imgIndex > 7) {
+        imgIndex = 0
+      }
+
+      
+      ++deg;
+            
+      
+
+      window.setTimeout(function () {
+        gameLoop()
+      }, 10)
+    }
+
+    gameLoop();
+  
+  });
+  
+
+</script>
+</head>
+<body>
+  <div class="border">
+    <img class="one" src="./preloader1.png" alt="png">
+    <!-- <img class="two" src="./preloader3.png" alt="png"> -->
+    <!-- <img class="three" src="./preloader4.png" alt="png"> -->
+    <!-- <img class="four" src="./preloader2.png" alt="png"> -->
+  </div>
+</body>
+</html>
